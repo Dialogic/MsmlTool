@@ -31,7 +31,13 @@ public class XMSForm extends javax.swing.JFrame {
         this.setResizable(false);
         String content = null;
         try {
-            content = new Scanner(new File("IpAddress.txt")).useDelimiter("\\Z").next();
+            File file = new File("IpAddress.txt");
+            if (file.exists()) {
+                Scanner scan = new Scanner(file);
+                content = scan.useDelimiter("\\Z").next();
+                scan.close();
+            }
+
         } catch (FileNotFoundException ex) {
             Logger.getLogger(XMSForm.class.getName()).log(Level.SEVERE, null, ex);
         }
