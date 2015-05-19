@@ -33,6 +33,7 @@ public class App {
     static int counter = 0;
     static boolean buttonsActive = true;
     static boolean hangup = false;
+    static boolean xmsBye = false;
     static Call inboundCall;
 
     /**
@@ -99,7 +100,7 @@ public class App {
             buttonsActive = callForm.disableButtons();
             // this is used to get the inboundCall to create bye when close button is clicked
             setInboundCall(inboundCall);
-            makeCall("msml", getXMSAdr(), new String(request.getRawContent()));
+            makeCall(callForm.getUserTextFieldValue(), getXMSAdr(), new String(request.getRawContent()));
         } catch (UnknownHostException ex) {
             logger.log(Level.SEVERE, ex.getMessage(), ex);
         }
@@ -158,16 +159,29 @@ public class App {
      * Logic to handle requests. Ex: ACK, BYE, etc.
      *
      * @param request
-     * @param inboundCall
+     * @param c
      */
-    public static void recievedRequest(Request request, Call inboundCall) {
+    public static void recievedRequest(Request request, Call c) {
         switch (request.getMethod()) {
             case Request.ACK:
                 System.out.println("App recieved ACK");
                 break;
             case Request.BYE:
-                inboundCall.doByeOk(request);
-                call.createBye();
+                if (buttonsActive) {
+                    // direct mode
+                    callForm.updateCallTextArea();
+                    xmsBye = true;
+                    call.doByeOk(request);
+                } else if (c == call) {
+                    // bye request sent by the XMS, bridge mode
+                    xmsBye = true;
+                    call.doByeOk(request);
+                    getInboundCall().createBye();
+                } else {
+                    // bye request sent by the softphone, bridge mode
+                    c.doByeOk(request);
+                    call.createBye();
+                }
                 break;
         }
     }
@@ -250,6 +264,8 @@ public class App {
      */
     public void close() {
         if (hangup) {
+            System.exit(0);
+        } else if (xmsBye) {
             System.exit(0);
         } else {
             if (call != null && call.getDialog() != null) {

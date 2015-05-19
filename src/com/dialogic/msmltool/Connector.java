@@ -203,10 +203,27 @@ public class Connector implements SipListener {
                 break;
             case Request.BYE:
                 System.out.println(timeStamp() + "BYE RECIEVED -> " + request);
-                // send ok response for the received BYE request
-                inboundCall.setCallId(requestEvent.getDialog().getCallId().getCallId());
-                inboundCall.setServerTransaction(serverTransaction);
-                inboundCall.handleStackRequest(requestEvent);
+                if (inboundCall != null) {
+                    // bridge mode
+                    call = callMapXms.get(requestEvent.getDialog().getCallId().getCallId());
+                    if (call != null) {
+                        // bye request sent by xms
+                        call.setCallId(requestEvent.getDialog().getCallId().getCallId());
+                        call.setServerTransaction(serverTransaction);
+                        call.handleStackRequest(requestEvent);
+                    } else {
+                        // bye request sent by softphone
+                        inboundCall.setCallId(requestEvent.getDialog().getCallId().getCallId());
+                        inboundCall.setServerTransaction(serverTransaction);
+                        inboundCall.handleStackRequest(requestEvent);
+                    }
+                } else {
+                    // direct mode
+                    call = callMapXms.get(requestEvent.getDialog().getCallId().getCallId());
+                    call.setCallId(requestEvent.getDialog().getCallId().getCallId());
+                    call.setServerTransaction(serverTransaction);
+                    call.handleStackRequest(requestEvent);
+                }
                 break;
             case Request.CANCEL:
                 System.out.println(timeStamp() + "CANCEL RECIEVED -> " + request);
@@ -347,50 +364,52 @@ public class Connector implements SipListener {
     public void sendResponse(Response response, Call call) {
         ServerTransaction st = call.getServerTransaction();
         CSeqHeader cSeq = (CSeqHeader) response.getHeader(CSeq.NAME);
-        try {
-            switch (response.getStatusCode()) {
-                case Response.OK:
-                    switch (cSeq.getMethod()) {
-                        case Request.BYE:
-                            System.out.println(timeStamp() + "Received Bye, sending OK");
-                            System.out.println("200 OK for BYE REQUEST -> " + response);
-                            st.sendResponse(response);
-                            callMapIncoming.remove(inboundCall.getInviteRequest());
-                            System.out.println(timeStamp() + "Incoming calls hashmap size -> " + callMapIncoming.size());
-                            break;
-                        case Request.INFO:
-                            System.out.println(timeStamp() + "Received Info, sending OK");
-                            System.out.println("200 OK for INFO REQUEST -> " + response);
-                            st.sendResponse(response);
-                            break;
-                        case Request.CANCEL:
-                            System.out.println(timeStamp() + "Received Cancel, sending OK");
-                            System.out.println("200 OK for CANCEL REQUEST -> " + response);
-                            st.sendResponse(response);
-                            break;
-                        case Request.INVITE:
-                            System.out.println(timeStamp() + "Sending 200 OK for invite");
-                            System.out.println("200 OK for INVITE REQUEST -> " + response);
-                            st.sendResponse(response);
-                            break;
-                        case Request.OPTIONS:
-                            System.out.println(timeStamp() + "Sending 200 OK for options");
-                            System.out.println("200 OK for OPTIONS REQUEST -> " + response);
-                            st.sendResponse(response);
-                            break;
-                    }
-                    break;
-                case Response.TRYING:
-                    System.out.println("SENT 100 TRYING RESPONSE -> " + response);
-                    st.sendResponse(response);
-                    break;
-                case Response.RINGING:
-                    System.out.println("SENT 180 RINGING RESPONSE -> " + response);
-                    st.sendResponse(response);
-                    break;
+        if (st != null) {
+            try {
+                switch (response.getStatusCode()) {
+                    case Response.OK:
+                        switch (cSeq.getMethod()) {
+                            case Request.BYE:
+                                System.out.println(timeStamp() + "Received Bye, sending OK");
+                                System.out.println("200 OK for BYE REQUEST -> " + response);
+                                st.sendResponse(response);
+                                callMapIncoming.remove(inboundCall.getInviteRequest());
+                                System.out.println(timeStamp() + "Incoming calls hashmap size -> " + callMapIncoming.size());
+                                break;
+                            case Request.INFO:
+                                System.out.println(timeStamp() + "Received Info, sending OK");
+                                System.out.println("200 OK for INFO REQUEST -> " + response);
+                                st.sendResponse(response);
+                                break;
+                            case Request.CANCEL:
+                                System.out.println(timeStamp() + "Received Cancel, sending OK");
+                                System.out.println("200 OK for CANCEL REQUEST -> " + response);
+                                st.sendResponse(response);
+                                break;
+                            case Request.INVITE:
+                                System.out.println(timeStamp() + "Sending 200 OK for invite");
+                                System.out.println("200 OK for INVITE REQUEST -> " + response);
+                                st.sendResponse(response);
+                                break;
+                            case Request.OPTIONS:
+                                System.out.println(timeStamp() + "Sending 200 OK for options");
+                                System.out.println("200 OK for OPTIONS REQUEST -> " + response);
+                                st.sendResponse(response);
+                                break;
+                        }
+                        break;
+                    case Response.TRYING:
+                        System.out.println("SENT 100 TRYING RESPONSE -> " + response);
+                        st.sendResponse(response);
+                        break;
+                    case Response.RINGING:
+                        System.out.println("SENT 180 RINGING RESPONSE -> " + response);
+                        st.sendResponse(response);
+                        break;
+                }
+            } catch (SipException | InvalidArgumentException ex) {
+                Logger.getLogger(Connector.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
             }
-        } catch (SipException | InvalidArgumentException ex) {
-            Logger.getLogger(Connector.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
         }
     }
 

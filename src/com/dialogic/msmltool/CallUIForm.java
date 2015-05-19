@@ -22,6 +22,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.sip.message.Request;
 import javax.sip.message.Response;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -534,6 +535,15 @@ public class CallUIForm extends javax.swing.JFrame {
         }
     }
 
+    public void updateCallTextArea() {
+        System.out.println("set the text");
+        callTextArea.setText(callTextArea.getText() + "\n" + timeStamp() + "\n" + Request.BYE);
+        callButton.setEnabled(true);
+        hangupButton.setEnabled(false);
+        userText.setEnabled(true);
+        addressText.setEnabled(true);
+    }
+
     public boolean disableButtons() {
         callButton.setEnabled(false);
         hangupButton.setEnabled(false);
@@ -555,6 +565,10 @@ public class CallUIForm extends javax.swing.JFrame {
         } catch (UnknownHostException ex) {
             Logger.getLogger(CallUIForm.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
         }
+    }
+
+    public String getUserTextFieldValue() {
+        return this.userText.getText();
     }
 
     /**
