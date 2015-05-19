@@ -13,8 +13,11 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.Inet4Address;
+import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -45,6 +48,7 @@ public class CallUIForm extends javax.swing.JFrame {
         hangupButton.setEnabled(false);
         userText.setText("msml");
         addressText.setText(App.getXMSAdr());
+        displayInitialMessage();
 
         this.addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
@@ -346,13 +350,7 @@ public class CallUIForm extends javax.swing.JFrame {
 
     //capturing the address for the call
     private void addressTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addressTextActionPerformed
-        if (validateIpAddress(this.addressText.getText())) {
-            // add method to validate ip address
-            //this.ipAddress = this.addressText.getText();
-        } else {
-            JOptionPane.showMessageDialog(this, "invalid ip address", "Error",
-                    JOptionPane.ERROR_MESSAGE);
-        }
+
     }//GEN-LAST:event_addressTextActionPerformed
 
     private void callButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_callButtonActionPerformed
@@ -516,13 +514,6 @@ public class CallUIForm extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_saveResponseButtonMouseClicked
 
-    public boolean validateIpAddress(String ip) {
-        final String PATTERN = "^(([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.){3}([01]?\\d\\d?|2[0-4]\\d|25[0-5])$";
-        Pattern pattern = Pattern.compile(PATTERN);
-        Matcher matcher = pattern.matcher(ip);
-        return matcher.matches();
-    }
-
     public void updateRecievedMessage(String message) {
         responseTextArea.setText(responseTextArea.getText() + "\n" + timeStamp() + "\n" + message);
         DefaultCaret caret = (DefaultCaret) responseTextArea.getCaret();
@@ -551,6 +542,19 @@ public class CallUIForm extends javax.swing.JFrame {
 
     private String timeStamp() {
         return new SimpleDateFormat("[HH:mm:ss.SSS] ").format(Calendar.getInstance().getTime());
+    }
+
+    private void displayInitialMessage() {
+        try {
+            List<String> lines = ReadFileUtility.readFile();
+            String port = null;
+            for (int i = 1; i < lines.size(); i += 2) {
+                port = lines.get(i);
+            }
+            callTextArea.setText("Waiting for call at " + Inet4Address.getLocalHost().getHostAddress() + ":" + port + "...");
+        } catch (UnknownHostException ex) {
+            Logger.getLogger(CallUIForm.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
+        }
     }
 
     /**

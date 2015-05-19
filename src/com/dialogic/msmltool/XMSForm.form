@@ -52,8 +52,8 @@
                       <Group type="102" attributes="0">
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Component id="enterButton" alignment="0" min="-2" max="-2" attributes="0"/>
-                              <Component id="userTextField" alignment="0" min="-2" pref="81" max="-2" attributes="0"/>
-                              <Component id="userLabel" alignment="0" min="-2" pref="52" max="-2" attributes="0"/>
+                              <Component id="localPortTextField" alignment="0" min="-2" pref="81" max="-2" attributes="0"/>
+                              <Component id="localPortLabel" alignment="0" min="-2" pref="62" max="-2" attributes="0"/>
                           </Group>
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" attributes="0">
@@ -80,12 +80,12 @@
                   <Component id="xmsServerConfigLabel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace pref="8" max="32767" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="userLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="localPortLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="ipAddressLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="userTextField" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="localPortTextField" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="ipAddressTextField" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
@@ -99,20 +99,20 @@
         </DimensionLayout>
       </Layout>
       <SubComponents>
-        <Component class="javax.swing.JLabel" name="userLabel">
+        <Component class="javax.swing.JLabel" name="localPortLabel">
           <Properties>
-            <Property name="text" type="java.lang.String" value="User"/>
+            <Property name="text" type="java.lang.String" value="Local Port"/>
           </Properties>
+          <AccessibilityProperties>
+            <Property name="AccessibleContext.accessibleName" type="java.lang.String" value="USer"/>
+          </AccessibilityProperties>
         </Component>
         <Component class="javax.swing.JLabel" name="ipAddressLabel">
           <Properties>
             <Property name="text" type="java.lang.String" value="XMS IP Address"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JTextField" name="userTextField">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="msml"/>
-          </Properties>
+        <Component class="javax.swing.JTextField" name="localPortTextField">
         </Component>
         <Component class="javax.swing.JTextField" name="ipAddressTextField">
         </Component>

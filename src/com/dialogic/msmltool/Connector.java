@@ -6,12 +6,12 @@
 package com.dialogic.msmltool;
 
 import gov.nist.javax.sip.header.CSeq;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.net.Inet4Address;
+import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.TooManyListenersException;
@@ -44,11 +44,6 @@ import javax.sip.header.HeaderFactory;
 import javax.sip.message.MessageFactory;
 import javax.sip.message.Request;
 import javax.sip.message.Response;
-import nu.xom.Builder;
-import nu.xom.Document;
-import nu.xom.Element;
-import nu.xom.Elements;
-import nu.xom.ParsingException;
 
 /**
  * Connector that creates a sip stack to handle requests/responses. Implements
@@ -84,22 +79,19 @@ public class Connector implements SipListener {
         if (instance == null) {
             try {
                 // get the port information from the config file.
-                FileInputStream xmlFile = new FileInputStream("ConnectorConfig.xml");
-                Document doc = new Builder().build(xmlFile);
-                Element root = doc.getRootElement();
-                Elements entries = root.getChildElements();
-                for (int x = 0; x < entries.size(); x++) {
-                    Element element = entries.get(x);
-                    if (element.getLocalName().equals("port")) {
-                        System.out.println("PORT -> " + element.getValue());
-                        port = Integer.parseInt(element.getValue());
-                    }
+                //port = Utility.getPortFromConfigFile();
+
+                // get the port provided by the user
+                List<String> lines = ReadFileUtility.getLines();
+                for (int i = 1; i < lines.size(); i += 2) {
+                    port = Integer.parseInt(lines.get(i));
                 }
+                System.out.println("PORT -> " + port);
                 System.out.println("HOST ADDRESS -> " + Inet4Address.getLocalHost().getHostAddress());
                 ipaddr = Inet4Address.getLocalHost().getHostAddress();
                 instance = new Connector(ipaddr, port);
-            } catch (ParsingException | IOException | NumberFormatException ex) {
-                Logger.getLogger(Connector.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (NumberFormatException | UnknownHostException ex) {
+                Logger.getLogger(Connector.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
             }
         }
         return instance;
@@ -513,5 +505,4 @@ public class Connector implements SipListener {
     public HeaderFactory getHeaderFactory() {
         return this.headerFactory;
     }
-
 }

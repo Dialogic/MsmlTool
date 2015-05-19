@@ -40,12 +40,8 @@ public class App {
      * enter the XMS information.
      *
      * @param args the command line arguments
-     * @throws java.text.ParseException
-     * @throws javax.sip.InvalidArgumentException
-     * @throws javax.sip.PeerUnavailableException
      */
-    public static void main(String[] args) throws ParseException, InvalidArgumentException, PeerUnavailableException {
-        Connector.getInstance();
+    public static void main(String[] args) {
         XMSForm.initialize();
 
         /**
@@ -63,6 +59,7 @@ public class App {
      */
     public void createCallForm() {
         callForm = CallUIForm.initialize();
+        Connector.getInstance();
     }
 
     /**
@@ -100,10 +97,9 @@ public class App {
             inboundCall.setFromAddr(Inet4Address.getLocalHost().getHostAddress());
             inboundCall.setFromUser("MsmlTool");
             buttonsActive = callForm.disableButtons();
-            // this is used to get the inboundCall to creating bye when close button is clicked
+            // this is used to get the inboundCall to create bye when close button is clicked
             setInboundCall(inboundCall);
-            //makeCall("msml", "146.152.64.141");
-            makeCall(getXMSUser(), getXMSAdr(), new String(request.getRawContent()));
+            makeCall("msml", getXMSAdr(), new String(request.getRawContent()));
         } catch (UnknownHostException ex) {
             logger.log(Level.SEVERE, ex.getMessage(), ex);
         }
@@ -265,22 +261,6 @@ public class App {
             }
             System.exit(0);
         }
-    }
-
-    /**
-     *
-     * @param user
-     */
-    public static void setXMSUser(String user) {
-        toUser = user;
-    }
-
-    /**
-     *
-     * @return the user.
-     */
-    public static String getXMSUser() {
-        return toUser;
     }
 
     /**

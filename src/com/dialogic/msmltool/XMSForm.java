@@ -6,11 +6,10 @@
 package com.dialogic.msmltool;
 
 import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Scanner;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -27,23 +26,18 @@ public class XMSForm extends javax.swing.JFrame {
      */
     public XMSForm() {
         initComponents();
-
         this.setResizable(false);
-        String content = null;
-        try {
-            File file = new File("IpAddress.txt");
-            if (file.exists()) {
-                Scanner scan = new Scanner(file);
-                content = scan.useDelimiter("\\Z").next();
-                scan.close();
-            }
 
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(XMSForm.class.getName()).log(Level.SEVERE, null, ex);
+        String ipAdr = null;
+        String port = null;
+        List<String> lines = ReadFileUtility.readFile();
+
+        for (int i = 1; i < lines.size(); i += 2) {
+            ipAdr = lines.get(i - 1);
+            port = lines.get(i);
         }
-        if (content != null) {
-            ipAddressTextField.setText(content);
-        }
+        ipAddressTextField.setText(ipAdr);
+        localPortTextField.setText(port);
     }
 
     public static void initialize() {
@@ -62,9 +56,9 @@ public class XMSForm extends javax.swing.JFrame {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        userLabel = new javax.swing.JLabel();
+        localPortLabel = new javax.swing.JLabel();
         ipAddressLabel = new javax.swing.JLabel();
-        userTextField = new javax.swing.JTextField();
+        localPortTextField = new javax.swing.JTextField();
         ipAddressTextField = new javax.swing.JTextField();
         enterButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
@@ -72,11 +66,9 @@ public class XMSForm extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        userLabel.setText("User");
+        localPortLabel.setText("Local Port");
 
         ipAddressLabel.setText("XMS IP Address");
-
-        userTextField.setText("msml");
 
         enterButton.setText("Enter");
         enterButton.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -110,8 +102,8 @@ public class XMSForm extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(enterButton)
-                            .addComponent(userTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(userLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(localPortTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(localPortLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGap(18, 18, 18)
@@ -129,11 +121,11 @@ public class XMSForm extends javax.swing.JFrame {
                 .addComponent(xmsServerConfigLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 8, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(userLabel)
+                    .addComponent(localPortLabel)
                     .addComponent(ipAddressLabel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(userTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(localPortTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(ipAddressTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -141,6 +133,8 @@ public class XMSForm extends javax.swing.JFrame {
                     .addComponent(cancelButton))
                 .addContainerGap())
         );
+
+        localPortLabel.getAccessibleContext().setAccessibleName("USer");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -168,11 +162,17 @@ public class XMSForm extends javax.swing.JFrame {
     private void enterButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_enterButtonMouseClicked
         BufferedWriter outfile = null;
         try {
-            App.setXMSUser(userTextField.getText());
             App.setXMSAdr(ipAddressTextField.getText());
             this.dispose();
             outfile = new BufferedWriter(new FileWriter("IpAddress.txt"));
             outfile.write(ipAddressTextField.getText());
+            outfile.newLine();
+            outfile.write(localPortTextField.getText());
+            List<String> lines = new ArrayList<>();
+            lines.add(ipAddressTextField.getText());
+            lines.add(localPortTextField.getText());
+            // set the values for the connector to get the port entered by the user
+            ReadFileUtility.setLines(lines);
             app.createCallForm();
         } catch (IOException ex) {
             Logger.getLogger(XMSForm.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
@@ -231,8 +231,8 @@ public class XMSForm extends javax.swing.JFrame {
     private javax.swing.JLabel ipAddressLabel;
     private javax.swing.JTextField ipAddressTextField;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JLabel userLabel;
-    private javax.swing.JTextField userTextField;
+    private javax.swing.JLabel localPortLabel;
+    private javax.swing.JTextField localPortTextField;
     private javax.swing.JLabel xmsServerConfigLabel;
     // End of variables declaration//GEN-END:variables
 }
