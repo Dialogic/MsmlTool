@@ -365,6 +365,7 @@ public class Call {
 
         sipConnector.register(this);
         System.out.println("CREATING AN INVITE REQUEST TO XMS");
+        App.updateCallTextBridgeRequestToXMS(request);
         sipConnector.sendRequest(request, this);
 
     }
@@ -379,6 +380,7 @@ public class Call {
         Request ackRequest;
         try {
             ackRequest = this.getDialog().createAck(((CSeqHeader) response.getHeader(CSeqHeader.NAME)).getSeqNumber());
+            App.updateCallTextBridgeRequestToXMS(ackRequest);
             sipConnector.sendAck(ackRequest, dialog);
         } catch (InvalidArgumentException | SipException ex) {
             logger.log(Level.SEVERE, ex.getMessage(), ex);
@@ -456,6 +458,7 @@ public class Call {
             Response optionsResponse = messageFactory.createResponse(Response.OK, request);
             ToHeader toHeader = (ToHeader) optionsResponse.getHeader(ToHeader.NAME);
             toHeader.setTag(Integer.toHexString(new Random().nextInt(0xffffff) + 0xffffff));
+            App.updateCallTextBridgeSentResponse(optionsResponse);
             sipConnector.sendResponse(optionsResponse, this);
             //this.setSdp(new String(request.getRawContent()));
         } catch (Exception ex) {
@@ -476,6 +479,7 @@ public class Call {
             Response tryingResponse = messageFactory.createResponse(Response.TRYING, request);
             ToHeader toHeader = (ToHeader) tryingResponse.getHeader(ToHeader.NAME);
             toHeader.setTag(Integer.toHexString(new Random().nextInt(0xffffff) + 0xffffff));
+            App.updateCallTextBridgeSentResponse(tryingResponse);
             sipConnector.sendResponse(tryingResponse, this);
         } catch (Exception ex) {
             logger.log(Level.SEVERE, ex.getMessage(), ex);
@@ -494,6 +498,7 @@ public class Call {
             Response ringingResponse = messageFactory.createResponse(Response.RINGING, request);
             ToHeader toHeader = (ToHeader) ringingResponse.getHeader(ToHeader.NAME);
             toHeader.setTag(Integer.toHexString(new Random().nextInt(0xffffff) + 0xffffff));
+            App.updateCallTextBridgeSentResponse(ringingResponse);
             sipConnector.sendResponse(ringingResponse, this);
         } catch (Exception ex) {
             logger.log(Level.SEVERE, ex.getMessage(), ex);
@@ -524,6 +529,7 @@ public class Call {
             ContentTypeHeader contentTypeHeader = headerFactory.createContentTypeHeader("application", "sdp");
 
             okResponse.setContent(request.getContent(), contentTypeHeader);
+            App.updateCallTextBridgeSentResponse(okResponse);
             sipConnector.sendResponse(okResponse, this);
         } catch (ParseException | InvalidArgumentException e) {
             logger.log(Level.SEVERE, e.getMessage(), e);

@@ -5,6 +5,7 @@
  */
 package com.dialogic.msmltool;
 
+import gov.nist.javax.sip.header.CSeq;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.BufferedReader;
@@ -20,14 +21,16 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import javax.sip.address.Address;
+import javax.sip.header.CSeqHeader;
+import javax.sip.header.FromHeader;
+import javax.sip.header.ToHeader;
 import javax.sip.message.Request;
 import javax.sip.message.Response;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
+import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.text.DefaultCaret;
 
 /**
@@ -36,6 +39,7 @@ import javax.swing.text.DefaultCaret;
  */
 public class CallUIForm extends javax.swing.JFrame {
 
+    static final Logger logger = Logger.getLogger(CallUIForm.class.getName());
     App app = new App();
 
     /**
@@ -424,7 +428,7 @@ public class CallUIForm extends javax.swing.JFrame {
                 System.out.println("Open command cancelled by the user");
             }
         } catch (IOException ex) {
-            Logger.getLogger(CallUIForm.class.getName()).log(Level.SEVERE, null, ex);
+            logger.log(Level.SEVERE, ex.getMessage(), ex);
         }
     }//GEN-LAST:event_fileButtonMouseClicked
 
@@ -521,27 +525,154 @@ public class CallUIForm extends javax.swing.JFrame {
         caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
     }
 
-    public void updateCallTextArea(int response) {
-        switch (response) {
+    public void updateCallTextArea(Response response) {
+        CSeqHeader cSeq = (CSeqHeader) response.getHeader(CSeq.NAME);
+        ToHeader toHeader = (ToHeader) response.getHeader("To");
+        Address resToAddress = toHeader.getAddress();
+        FromHeader fromHeader = (FromHeader) response.getHeader("From");
+        Address resFromAddress = fromHeader.getAddress();
+        switch (response.getStatusCode()) {
+            case Response.OK:
+                switch (cSeq.getMethod()) {
+                    case Request.INVITE:
+                        callTextArea.setText(callTextArea.getText() + "\n" + timeStamp() + "\nReceived "
+                                + response.getStatusCode() + " OK for " + cSeq.getMethod() + " from "
+                                + resToAddress + " to " + resFromAddress);
+                        break;
+                }
+                break;
             case Response.TRYING:
-                callTextArea.setText(callTextArea.getText() + "\n" + timeStamp() + "\n" + response + " TRYING");
+                callTextArea.setText(callTextArea.getText() + "\n" + timeStamp() + "\nReceived "
+                        + response.getStatusCode() + " TRYING for " + cSeq.getMethod() + " from "
+                        + resToAddress + " to " + resFromAddress);
                 break;
             case Response.RINGING:
-                callTextArea.setText(callTextArea.getText() + "\n" + timeStamp() + "\n" + response + " RINGING");
-                break;
-            case Response.OK:
-                callTextArea.setText(callTextArea.getText() + "\n" + timeStamp() + "\n" + response + " OK");
+                callTextArea.setText(callTextArea.getText() + "\n" + timeStamp() + "\nReceived "
+                        + response.getStatusCode() + " RINGING for " + cSeq.getMethod() + " from "
+                        + resToAddress + " to " + resFromAddress);
                 break;
         }
     }
 
     public void updateCallTextArea() {
-        System.out.println("set the text");
         callTextArea.setText(callTextArea.getText() + "\n" + timeStamp() + "\n" + Request.BYE);
         callButton.setEnabled(true);
         hangupButton.setEnabled(false);
         userText.setEnabled(true);
         addressText.setEnabled(true);
+    }
+
+    /**
+     * Displays the requests and responses sent to and received from the XMS in
+     * bridge mode. Information is displayed in the call tab.
+     *
+     * @param res
+     * @param req
+     */
+    public void updateCallTextAreaBridgeXMS(Response res, Request req) {
+        if (req != null) {
+            ToHeader toHeader = (ToHeader) req.getHeader("To");
+            Address reqToAddress = toHeader.getAddress();
+            FromHeader fromHeader = (FromHeader) req.getHeader("From");
+            Address reqFromAddress = fromHeader.getAddress();
+            switch (req.getMethod()) {
+                case Request.INVITE:
+                    callTextArea.setText(callTextArea.getText() + "\n" + timeStamp()
+                            + "\nSend INVITE request from " + reqFromAddress + " to " + reqToAddress);
+                    break;
+                case Request.ACK:
+                    callTextArea.setText(callTextArea.getText() + "\n" + timeStamp()
+                            + "\nSend ACK from " + reqFromAddress + " to " + reqToAddress);
+                    break;
+            }
+        }
+        if (res != null) {
+            CSeqHeader cSeq = (CSeqHeader) res.getHeader(CSeq.NAME);
+            ToHeader toHeader = (ToHeader) res.getHeader("To");
+            Address resToAddress = toHeader.getAddress();
+            FromHeader fromHeader = (FromHeader) res.getHeader("From");
+            Address resFromAddress = fromHeader.getAddress();
+            switch (res.getStatusCode()) {
+                case Response.OK:
+                    switch (cSeq.getMethod()) {
+                        case Request.INVITE:
+                            callTextArea.setText(callTextArea.getText() + "\n" + timeStamp() + "\nReceived "
+                                    + res.getStatusCode() + " OK for " + cSeq.getMethod() + " from "
+                                    + resToAddress + " to " + resFromAddress);
+                            break;
+                    }
+                    break;
+                case Response.TRYING:
+                    callTextArea.setText(callTextArea.getText() + "\n" + timeStamp() + "\nReceived "
+                            + res.getStatusCode() + " TRYING for " + cSeq.getMethod() + " from "
+                            + resToAddress + " to " + resFromAddress);
+                    break;
+                case Response.RINGING:
+                    callTextArea.setText(callTextArea.getText() + "\n" + timeStamp() + "\nReceived "
+                            + res.getStatusCode() + " RINGING for " + cSeq.getMethod() + " from "
+                            + resToAddress + " to " + resFromAddress);
+                    break;
+            }
+        }
+    }
+
+    /**
+     * Displays the requests received and responses sent to the soft phone in
+     * bridge mode. Information is displayed in the call tab.
+     *
+     * @param request
+     * @param response
+     */
+    public void updateCallTextAreaBridgeMode(Request request, Response response) {
+        if (request != null) {
+            ToHeader toHeader = (ToHeader) request.getHeader("To");
+            Address reqToAddress = toHeader.getAddress();
+            FromHeader fromHeader = (FromHeader) request.getHeader("From");
+            Address reqFromAddress = fromHeader.getAddress();
+            switch (request.getMethod()) {
+                case Request.INVITE:
+                    callTextArea.setText(callTextArea.getText() + "\n" + timeStamp() + "\nReceived "
+                            + request.getMethod() + " from " + reqFromAddress + " to " + reqToAddress);
+                    break;
+                case Request.OPTIONS:
+                    callTextArea.setText(callTextArea.getText() + "\n" + timeStamp() + "\nReceived "
+                            + request.getMethod() + " from " + reqFromAddress + " to " + reqToAddress);
+                    break;
+                case Request.ACK:
+                    callTextArea.setText(callTextArea.getText() + "\n" + timeStamp() + "\nReceived "
+                            + request.getMethod() + " from " + reqFromAddress + " to " + reqToAddress);
+                    break;
+            }
+        }
+        if (response != null) {
+            CSeqHeader cSeq = (CSeqHeader) response.getHeader(CSeq.NAME);
+            ToHeader toHeader = (ToHeader) response.getHeader("To");
+            Address resToAddress = toHeader.getAddress();
+            FromHeader fromHeader = (FromHeader) response.getHeader("From");
+            Address resFromAddress = fromHeader.getAddress();
+            switch (response.getStatusCode()) {
+                case Response.OK:
+                    switch (cSeq.getMethod()) {
+                        case Request.INVITE:
+                            callTextArea.setText(callTextArea.getText() + "\n" + timeStamp()
+                                    + "\nSend 200 OK for INVITE from " + resToAddress + " to " + resFromAddress);
+                            break;
+                        case Request.OPTIONS:
+                            callTextArea.setText(callTextArea.getText() + "\n" + timeStamp()
+                                    + "\nSend 200 OK for OPTIONS from " + resToAddress + " to " + resFromAddress);
+                            break;
+                    }
+                    break;
+                case Response.TRYING:
+                    callTextArea.setText(callTextArea.getText() + "\n" + timeStamp()
+                            + "\nSend 100 TRYING for INVITE from " + resToAddress + " to " + resFromAddress);
+                    break;
+                case Response.RINGING:
+                    callTextArea.setText(callTextArea.getText() + "\n" + timeStamp()
+                            + "\nSend 180 RINGING for INVITE from " + resToAddress + " to " + resFromAddress);
+                    break;
+            }
+        }
     }
 
     public boolean disableButtons() {
@@ -562,8 +693,9 @@ public class CallUIForm extends javax.swing.JFrame {
                 port = lines.get(i);
             }
             callTextArea.setText("Waiting for call at " + Inet4Address.getLocalHost().getHostAddress() + ":" + port + "...");
+
         } catch (UnknownHostException ex) {
-            Logger.getLogger(CallUIForm.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
+            logger.log(Level.SEVERE, ex.getMessage(), ex);
         }
     }
 
@@ -585,16 +717,11 @@ public class CallUIForm extends javax.swing.JFrame {
                 if ("Nimbus".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
+
                 }
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(CallUIForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(CallUIForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(CallUIForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(CallUIForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
+            logger.log(java.util.logging.Level.SEVERE, ex.getMessage(), ex);
         }
         //</editor-fold>
         //</editor-fold>

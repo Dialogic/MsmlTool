@@ -100,6 +100,7 @@ public class App {
             buttonsActive = callForm.disableButtons();
             // this is used to get the inboundCall to create bye when close button is clicked
             setInboundCall(inboundCall);
+            callForm.updateCallTextAreaBridgeMode(request, null);
             makeCall(callForm.getUserTextFieldValue(), getXMSAdr(), new String(request.getRawContent()));
         } catch (UnknownHostException ex) {
             logger.log(Level.SEVERE, ex.getMessage(), ex);
@@ -119,9 +120,10 @@ public class App {
                 switch (cSeq.getMethod()) {
                     case Request.INVITE:
                         if (buttonsActive) {
-                            callForm.updateCallTextArea(Response.OK);
+                            callForm.updateCallTextArea(response);
                             call.createAckRequest(response);
                         } else {
+                            callForm.updateCallTextAreaBridgeXMS(response, null);
                             call.createAckRequest(response);
                             inboundCall.createInviteOk(inboundCall.getInviteRequest());
                         }
@@ -130,7 +132,7 @@ public class App {
                         break;
                     case Request.BYE:
                         if (buttonsActive) {
-                            callForm.updateCallTextArea(Response.OK);
+                            callForm.updateCallTextArea(response);
                         } else {
                             callForm.setVisible(false);
                             System.exit(0);
@@ -140,15 +142,17 @@ public class App {
                 break;
             case Response.TRYING:
                 if (buttonsActive) {
-                    callForm.updateCallTextArea(Response.TRYING);
+                    callForm.updateCallTextArea(response);
                 } else {
+                    callForm.updateCallTextAreaBridgeXMS(response, null);
                     inboundCall.createTryingResponse(inboundCall.getInviteRequest());
                 }
                 break;
             case Response.RINGING:
                 if (buttonsActive) {
-                    callForm.updateCallTextArea(Response.RINGING);
+                    callForm.updateCallTextArea(response);
                 } else {
+                    callForm.updateCallTextAreaBridgeXMS(response, null);
                     inboundCall.createRingingResponse(inboundCall.getInviteRequest());
                 }
                 break;
@@ -164,7 +168,7 @@ public class App {
     public static void recievedRequest(Request request, Call c) {
         switch (request.getMethod()) {
             case Request.ACK:
-                System.out.println("App recieved ACK");
+                callForm.updateCallTextAreaBridgeMode(request, null);
                 break;
             case Request.BYE:
                 if (buttonsActive) {
@@ -225,6 +229,7 @@ public class App {
      * @param c. The incoming call object
      */
     public static void optionsRequest(Request request, Call c) {
+        callForm.updateCallTextAreaBridgeMode(request, null);
         c.createOptionsResponse(request);
     }
 
@@ -330,5 +335,26 @@ public class App {
                 + "a=fmtp:101 0-11\r\n"
                 + "a=sendrecv\r\n\r\n";
         return contentString;
+    }
+
+    /**
+     * This method is used to let the user know about the call flow via the UI.
+     * Displays the responses sent to an incoming invite request. Ex: 200OK,
+     * 100, 180, etc.
+     *
+     * @param res
+     */
+    public static void updateCallTextBridgeSentResponse(Response res) {
+        callForm.updateCallTextAreaBridgeMode(null, res);
+    }
+
+    /**
+     * This method is used to let the user know about the call flow via the UI.
+     * Displays the requests sent to the XMS, ex: INVITE, ACK, etc.
+     *
+     * @param req
+     */
+    public static void updateCallTextBridgeRequestToXMS(Request req) {
+        callForm.updateCallTextAreaBridgeXMS(null, req);
     }
 }
