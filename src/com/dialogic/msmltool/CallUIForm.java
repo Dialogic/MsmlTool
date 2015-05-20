@@ -113,7 +113,7 @@ public class CallUIForm extends javax.swing.JFrame {
             }
         });
 
-        addressLabel.setText("SIP Address or Phone number");
+        addressLabel.setText("IP Address");
 
         callButton.setText("Call");
         callButton.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -156,7 +156,7 @@ public class CallUIForm extends javax.swing.JFrame {
         msmlTextArea.setRows(5);
         jScrollPane1.setViewportView(msmlTextArea);
 
-        responseLabel.setText("Recieved Response");
+        responseLabel.setText("Received Response");
 
         responseTextArea.setColumns(20);
         responseTextArea.setRows(5);
@@ -723,8 +723,6 @@ public class CallUIForm extends javax.swing.JFrame {
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
             logger.log(java.util.logging.Level.SEVERE, ex.getMessage(), ex);
         }
-        //</editor-fold>
-        //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {

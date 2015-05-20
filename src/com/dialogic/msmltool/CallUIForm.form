@@ -85,7 +85,7 @@
     </Component>
     <Component class="javax.swing.JLabel" name="addressLabel">
       <Properties>
-        <Property name="text" type="java.lang.String" value="SIP Address or Phone number"/>
+        <Property name="text" type="java.lang.String" value="IP Address"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JButton" name="callButton">
@@ -253,7 +253,7 @@
             </Container>
             <Component class="javax.swing.JLabel" name="responseLabel">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Recieved Response"/>
+                <Property name="text" type="java.lang.String" value="Received Response"/>
               </Properties>
             </Component>
             <Container class="javax.swing.JScrollPane" name="jScrollPane2">
