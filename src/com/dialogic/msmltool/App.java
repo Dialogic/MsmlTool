@@ -325,7 +325,7 @@ public class App {
      */
     public String getStringMessage() {
         String contentString = "v=0\r\n"
-                + "o=swetha 575 654 IN IP4 10.20.120.24\r\n"
+                + "o=MsmlTool 575 654 IN IP4 10.20.120.24\r\n"
                 + "s=Talk\r\n"
                 + "c=IN IP4 10.20.120.24\r\n"
                 + "t=0 0\r\n"

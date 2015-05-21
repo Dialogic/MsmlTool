@@ -100,6 +100,8 @@ public class CallUIForm extends javax.swing.JFrame {
         clearResponseButton = new javax.swing.JButton();
         saveMsmlScriptButton = new javax.swing.JButton();
         saveResponseButton = new javax.swing.JButton();
+        msmlComboBox = new javax.swing.JComboBox();
+        submitButton = new javax.swing.JButton();
         userText = new javax.swing.JTextField();
         userLabel = new javax.swing.JLabel();
         hangupButton = new javax.swing.JButton();
@@ -225,58 +227,74 @@ public class CallUIForm extends javax.swing.JFrame {
             }
         });
 
+        msmlComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "None Selected", "Play", "Record", "CreateConf", "DeleteConf" }));
+
+        submitButton.setText("Submit");
+        submitButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                submitButtonMouseClicked(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addComponent(fileTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 305, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(fileButton, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(sendMsmlButton)
-                .addGap(15, 15, 15))
-            .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1)
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addContainerGap())
-            .addGroup(jPanel2Layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(msmlScriptLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(responseLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(clearButton)
+                        .addGap(18, 18, 18)
+                        .addComponent(saveMsmlScriptButton))
+                    .addComponent(fileTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 260, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 27, Short.MAX_VALUE)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(msmlComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(fileButton, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(sendMsmlButton, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(submitButton))
+                .addGap(15, 15, 15))
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(clearResponseButton)
                         .addGap(18, 18, 18)
                         .addComponent(saveResponseButton))
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(clearButton)
-                        .addGap(18, 18, 18)
-                        .addComponent(saveMsmlScriptButton)))
-                .addContainerGap(346, Short.MAX_VALUE))
+                        .addContainerGap()
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(msmlScriptLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(responseLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addComponent(msmlScriptLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 128, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 127, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(clearButton)
-                    .addComponent(saveMsmlScriptButton))
-                .addGap(2, 2, 2)
+                    .addComponent(saveMsmlScriptButton)
+                    .addComponent(msmlComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(submitButton))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(fileTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(fileButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(sendMsmlButton))
-                .addGap(7, 7, 7)
-                .addComponent(responseLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 139, Short.MAX_VALUE)
+                .addComponent(responseLabel)
+                .addGap(2, 2, 2)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 136, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(clearResponseButton, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -519,6 +537,56 @@ public class CallUIForm extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_saveResponseButtonMouseClicked
 
+    private void submitButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_submitButtonMouseClicked
+        String itemSelected = (String) msmlComboBox.getSelectedItem();
+        switch (itemSelected) {
+            case "Play":
+                String play = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n"
+                        + "<msml version=\"1.1\">\n"
+                        + "<dialogstart target=\"conn:1234\" type=\"application/moml+xml\" name=\"DIALOG:AudioPlay\">\n"
+                        + "	<play >\n"
+                        + "		<audio uri=\"file://verification/greeting.wav\" />\n"
+                        + "	</play>\n"
+                        + "</dialogstart>\n"
+                        + "</msml>";
+                msmlTextArea.setText(play);
+                break;
+            case "Record":
+                String record = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n"
+                        + "<msml version=\"1.1\">\n"
+                        + "<dialogstart target=\"conn:1234\" type=\"application/moml+xml\">\n"
+                        + "	<record beep=\"true\" dest=\"file://recorded/Test.wav\" format=\"audio/wav\" maxtime=\"10s\">\n"
+                        + "		<recordexit>\n"
+                        + "			<send target=\"group\" event=\"terminate\"/>\n"
+                        + "		</recordexit>\n"
+                        + "	</record>\n"
+                        + "</dialogstart>\n"
+                        + "</msml>";
+                msmlTextArea.setText(record);
+                break;
+            case "CreateConf":
+                String createConference = "<msml version=\"1.1\">\n"
+                        + "<createconference name=\"491230000001\" deletewhen=\"nocontrol\" mark=\"1\" term=\"true\">\n"
+                        + "<audiomix id=\"mix491230000001\"/>\n"
+                        + "</createconference>\n"
+                        + "<join id1=\"conf:491230000001\" id2=\"conn:1234\" mark=\"2\">\n"
+                        + "<stream media=\"audio\"/>\n"
+                        + "</join>\n"
+                        + "</msml>";
+                msmlTextArea.setText(createConference);
+                break;
+            case "DeleteConf":
+                String deleteConference = "<msml version=\"1.1\">\n"
+                        + "<destroyconference id=\"conf:491230000001\" mark=\"1\" />\n"
+                        + "</msml>";
+                msmlTextArea.setText(deleteConference);
+                break;
+            default:
+                // no item selected
+                break;
+        }
+    }//GEN-LAST:event_submitButtonMouseClicked
+
     public void updateRecievedMessage(String message) {
         responseTextArea.setText(responseTextArea.getText() + "\n" + timeStamp() + "\n" + message);
         DefaultCaret caret = (DefaultCaret) responseTextArea.getCaret();
@@ -748,6 +816,7 @@ public class CallUIForm extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JComboBox msmlComboBox;
     private javax.swing.JLabel msmlScriptLabel;
     private javax.swing.JTextArea msmlTextArea;
     private javax.swing.JLabel responseLabel;
@@ -755,6 +824,7 @@ public class CallUIForm extends javax.swing.JFrame {
     private javax.swing.JButton saveMsmlScriptButton;
     private javax.swing.JButton saveResponseButton;
     private javax.swing.JButton sendMsmlButton;
+    private javax.swing.JButton submitButton;
     private javax.swing.JLabel userLabel;
     private javax.swing.JTextField userText;
     // End of variables declaration//GEN-END:variables

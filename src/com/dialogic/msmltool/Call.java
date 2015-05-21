@@ -21,7 +21,6 @@ import javax.sip.SipException;
 import javax.sip.address.Address;
 import javax.sip.address.AddressFactory;
 import javax.sip.address.SipURI;
-import javax.sip.address.URI;
 import javax.sip.header.AllowHeader;
 import javax.sip.header.CSeqHeader;
 import javax.sip.header.CallIdHeader;
@@ -515,10 +514,13 @@ public class Call {
         MessageFactory messageFactory = sipConnector.getMessageFactory();
         AddressFactory addressFactory = sipConnector.getAddressFactory();
         HeaderFactory headerFactory = sipConnector.getHeaderFactory();
+
+        ToHeader toHeader = (ToHeader) request.getHeader("To");
+        Address reqToAddress = toHeader.getAddress();
         try {
             Response okResponse = messageFactory.createResponse(Response.OK, this.getServerTransaction().getRequest());
 
-            Address contactAddress = addressFactory.createAddress("<sip:MsmlTool@10.20.120.24:5070>");
+            Address contactAddress = addressFactory.createAddress(reqToAddress.toString());
             ContactHeader contactHeader = headerFactory.createContactHeader(contactAddress);
             okResponse.addHeader(contactHeader);
             MaxForwardsHeader maxForwardsHeader = headerFactory.createMaxForwardsHeader(70);
@@ -568,6 +570,9 @@ public class Call {
         MessageFactory messageFactory = sipConnector.getMessageFactory();
         AddressFactory addressFactory = sipConnector.getAddressFactory();
         HeaderFactory headerFactory = sipConnector.getHeaderFactory();
+
+        ToHeader toHeader = (ToHeader) request.getHeader("To");
+        Address reqToAddress = toHeader.getAddress();
         try {
             Response okResponse = messageFactory.createResponse(Response.OK, request);
 
@@ -575,7 +580,7 @@ public class Call {
             okResponse.addHeader(supportedHeader);
             Header sessionExpiresHeader = request.getHeader("Session-Expires");
             okResponse.addHeader(sessionExpiresHeader);
-            Address contactAddress = addressFactory.createAddress("<sip:swetha@10.20.105.11:5070>");
+            Address contactAddress = addressFactory.createAddress(reqToAddress.toString());
             ContactHeader contactHeader = headerFactory.createContactHeader(contactAddress);
             okResponse.addHeader(contactHeader);
 
