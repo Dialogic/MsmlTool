@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -162,6 +164,11 @@ public class XMSForm extends javax.swing.JFrame {
     private void enterButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_enterButtonMouseClicked
         BufferedWriter outfile = null;
         try {
+            if (ipAddressTextField.getText().isEmpty() || localPortTextField.getText().isEmpty()) {
+                JOptionPane.showMessageDialog(new JFrame(), "Please Enter Port and XMS IP Address", "Dialog",
+                        JOptionPane.ERROR_MESSAGE);
+                return;
+            }
             App.setXMSAdr(ipAddressTextField.getText());
             this.dispose();
             outfile = new BufferedWriter(new FileWriter("IpAddress.txt"));
@@ -177,10 +184,12 @@ public class XMSForm extends javax.swing.JFrame {
         } catch (IOException ex) {
             Logger.getLogger(XMSForm.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
         } finally {
-            try {
-                outfile.close();
-            } catch (IOException ex) {
-                Logger.getLogger(XMSForm.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
+            if (outfile != null) {
+                try {
+                    outfile.close();
+                } catch (IOException ex) {
+                    Logger.getLogger(XMSForm.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
+                }
             }
         }
     }//GEN-LAST:event_enterButtonMouseClicked

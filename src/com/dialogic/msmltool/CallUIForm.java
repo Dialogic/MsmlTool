@@ -29,6 +29,7 @@ import javax.sip.message.Request;
 import javax.sip.message.Response;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.text.DefaultCaret;
@@ -394,6 +395,11 @@ public class CallUIForm extends javax.swing.JFrame {
 
     private void callButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_callButtonMouseClicked
 
+        if (userText.getText().isEmpty() || addressText.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(new JFrame(), "Please Enter User and XMS IP Address", "Dialog",
+                    JOptionPane.ERROR_MESSAGE);
+            return;
+        }
         app.makeCall(this.userText.getText(), this.addressText.getText(), null);
         callButton.setEnabled(false);
         hangupButton.setEnabled(true);
