@@ -125,6 +125,7 @@ public class App {
                         } else {
                             callForm.updateCallTextAreaBridgeXMS(response, null);
                             call.createAckRequest(response);
+                            inboundCall.setSdp(new String(response.getRawContent()));
                             inboundCall.createInviteOk(inboundCall.getInviteRequest());
                         }
                         break;
@@ -260,8 +261,10 @@ public class App {
      * Send BYE request when the user clicks on the hangup button.
      */
     public void hangup() {
-        call.createBye();
-        hangup = true;
+        if (call != null) {
+            call.createBye();
+            hangup = true;
+        }
     }
 
     /**

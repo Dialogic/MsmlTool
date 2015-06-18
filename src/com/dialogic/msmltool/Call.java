@@ -530,7 +530,7 @@ public class Call {
             okResponse.addHeader(allowHeader);
             ContentTypeHeader contentTypeHeader = headerFactory.createContentTypeHeader("application", "sdp");
 
-            okResponse.setContent(request.getContent(), contentTypeHeader);
+            okResponse.setContent(this.getSdp(), contentTypeHeader);
             App.updateCallTextBridgeSentResponse(okResponse);
             sipConnector.sendResponse(okResponse, this);
         } catch (ParseException | InvalidArgumentException e) {
