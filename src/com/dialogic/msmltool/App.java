@@ -199,6 +199,7 @@ public class App {
      */
     public void sendMsml(String msml) {
         if (call != null) {
+            System.out.println("Call" + call);
             call.createInfoRequest(msml);
         }
     }
@@ -264,6 +265,7 @@ public class App {
         if (call != null) {
             call.createBye();
             hangup = true;
+            call = null;
         }
     }
 

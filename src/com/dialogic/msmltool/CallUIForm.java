@@ -39,7 +39,7 @@ import javax.swing.text.DefaultCaret;
  * @author ssatyana
  */
 public class CallUIForm extends javax.swing.JFrame {
-
+    
     static final Logger logger = Logger.getLogger(CallUIForm.class.getName());
     App app = new App();
 
@@ -47,6 +47,16 @@ public class CallUIForm extends javax.swing.JFrame {
      * Creates new form CallForm
      */
     private CallUIForm() {
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
+            logger.log(java.util.logging.Level.SEVERE, ex.getMessage(), ex);
+        }
         initComponents();
         this.setVisible(true);
         this.setLocationRelativeTo(null);
@@ -55,7 +65,7 @@ public class CallUIForm extends javax.swing.JFrame {
         userText.setText("msml");
         addressText.setText(App.getXMSAdr());
         displayInitialMessage();
-
+        
         this.addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosing(java.awt.event.WindowEvent windowEvent) {
@@ -63,7 +73,7 @@ public class CallUIForm extends javax.swing.JFrame {
             }
         });
     }
-
+    
     public static CallUIForm initialize() {
         CallUIForm callForm = new CallUIForm();
         callForm.setVisible(true);
@@ -102,7 +112,6 @@ public class CallUIForm extends javax.swing.JFrame {
         saveMsmlScriptButton = new javax.swing.JButton();
         saveResponseButton = new javax.swing.JButton();
         msmlComboBox = new javax.swing.JComboBox();
-        submitButton = new javax.swing.JButton();
         userText = new javax.swing.JTextField();
         userLabel = new javax.swing.JLabel();
         hangupButton = new javax.swing.JButton();
@@ -119,11 +128,6 @@ public class CallUIForm extends javax.swing.JFrame {
         addressLabel.setText("IP Address");
 
         callButton.setText("Call");
-        callButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                callButtonMouseClicked(evt);
-            }
-        });
         callButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 callButtonActionPerformed(evt);
@@ -166,11 +170,6 @@ public class CallUIForm extends javax.swing.JFrame {
         jScrollPane2.setViewportView(responseTextArea);
 
         fileButton.setText("ChooseFile");
-        fileButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fileButtonMouseClicked(evt);
-            }
-        });
         fileButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 fileButtonActionPerformed(evt);
@@ -178,9 +177,9 @@ public class CallUIForm extends javax.swing.JFrame {
         });
 
         sendMsmlButton.setText("Send");
-        sendMsmlButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                sendMsmlButtonMouseClicked(evt);
+        sendMsmlButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                sendMsmlButtonActionPerformed(evt);
             }
         });
 
@@ -191,11 +190,6 @@ public class CallUIForm extends javax.swing.JFrame {
         });
 
         clearButton.setText("Clear");
-        clearButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                clearButtonMouseClicked(evt);
-            }
-        });
         clearButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 clearButtonActionPerformed(evt);
@@ -203,11 +197,6 @@ public class CallUIForm extends javax.swing.JFrame {
         });
 
         clearResponseButton.setText("Clear");
-        clearResponseButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                clearResponseButtonMouseClicked(evt);
-            }
-        });
         clearResponseButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 clearResponseButtonActionPerformed(evt);
@@ -215,25 +204,23 @@ public class CallUIForm extends javax.swing.JFrame {
         });
 
         saveMsmlScriptButton.setText("Save");
-        saveMsmlScriptButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                saveMsmlScriptButtonMouseClicked(evt);
+        saveMsmlScriptButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                saveMsmlScriptButtonActionPerformed(evt);
             }
         });
 
         saveResponseButton.setText("Save");
-        saveResponseButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                saveResponseButtonMouseClicked(evt);
+        saveResponseButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                saveResponseButtonActionPerformed(evt);
             }
         });
 
         msmlComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "None Selected", "Play", "Record", "CreateConf", "DeleteConf" }));
-
-        submitButton.setText("Submit");
-        submitButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                submitButtonMouseClicked(evt);
+        msmlComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                msmlComboBoxActionPerformed(evt);
             }
         });
 
@@ -243,37 +230,35 @@ public class CallUIForm extends javax.swing.JFrame {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING))
-                .addContainerGap())
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(clearButton)
-                        .addGap(18, 18, 18)
-                        .addComponent(saveMsmlScriptButton))
-                    .addComponent(fileTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 260, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 27, Short.MAX_VALUE)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(msmlComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(fileButton, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(sendMsmlButton, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(submitButton))
-                .addGap(15, 15, 15))
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(clearResponseButton)
-                        .addGap(18, 18, 18)
-                        .addComponent(saveResponseButton))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addContainerGap()
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(msmlScriptLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(responseLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(clearButton)
+                                .addGap(18, 18, 18)
+                                .addComponent(saveMsmlScriptButton)
+                                .addGap(18, 18, 18)
+                                .addComponent(sendMsmlButton, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 142, Short.MAX_VALUE))
+                            .addComponent(fileTextField))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(msmlComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(fileButton, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(jScrollPane1)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(clearResponseButton)
+                                .addGap(18, 18, 18)
+                                .addComponent(saveResponseButton))
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(msmlScriptLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(responseLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -286,12 +271,11 @@ public class CallUIForm extends javax.swing.JFrame {
                     .addComponent(clearButton)
                     .addComponent(saveMsmlScriptButton)
                     .addComponent(msmlComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(submitButton))
+                    .addComponent(sendMsmlButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(fileTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(fileButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(sendMsmlButton))
+                    .addComponent(fileButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(responseLabel)
                 .addGap(2, 2, 2)
@@ -314,11 +298,6 @@ public class CallUIForm extends javax.swing.JFrame {
         userLabel.setText("User");
 
         hangupButton.setText("Hangup");
-        hangupButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                hangupButtonMouseClicked(evt);
-            }
-        });
         hangupButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 hangupButtonActionPerformed(evt);
@@ -374,27 +353,10 @@ public class CallUIForm extends javax.swing.JFrame {
 
     //capturing the address for the call
     private void addressTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addressTextActionPerformed
-
+        
     }//GEN-LAST:event_addressTextActionPerformed
-
+    
     private void callButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_callButtonActionPerformed
-
-    }//GEN-LAST:event_callButtonActionPerformed
-
-    private void userTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_userTextActionPerformed
-        System.out.println("Entered text" + this.userText.getText());
-    }//GEN-LAST:event_userTextActionPerformed
-
-    public String getUser() {
-        return this.userText.getText();
-    }
-
-    private void hangupButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hangupButtonActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_hangupButtonActionPerformed
-
-    private void callButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_callButtonMouseClicked
-
         if (userText.getText().isEmpty() || addressText.getText().isEmpty()) {
             JOptionPane.showMessageDialog(new JFrame(), "Please Enter User and XMS IP Address", "Dialog",
                     JOptionPane.ERROR_MESSAGE);
@@ -405,100 +367,90 @@ public class CallUIForm extends javax.swing.JFrame {
         hangupButton.setEnabled(true);
         userText.setEnabled(false);
         addressText.setEnabled(false);
-    }//GEN-LAST:event_callButtonMouseClicked
-
+    }//GEN-LAST:event_callButtonActionPerformed
+    
+    private void userTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_userTextActionPerformed
+        System.out.println("Entered text" + this.userText.getText());
+    }//GEN-LAST:event_userTextActionPerformed
+    
+    public String getUser() {
+        return this.userText.getText();
+    }
+    
+    private void hangupButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hangupButtonActionPerformed
+        app.hangup();
+        callButton.setEnabled(true);
+        hangupButton.setEnabled(false);
+        userText.setEnabled(true);
+        addressText.setEnabled(true);
+        this.dispose();
+        System.exit(0);
+    }//GEN-LAST:event_hangupButtonActionPerformed
+    
     private void fileTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fileTextFieldActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_fileTextFieldActionPerformed
-
+    
     private void fileButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fileButtonActionPerformed
-
-    }//GEN-LAST:event_fileButtonActionPerformed
-
-    private void fileButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fileButtonMouseClicked
         try {
             JFileChooser chooser = new JFileChooser("");
             chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-
-            // to populate the text field
-            chooser.addPropertyChangeListener(JFileChooser.SELECTED_FILE_CHANGED_PROPERTY, new PropertyChangeListener() {
-                public void propertyChange(PropertyChangeEvent evt) {
-                    if (JFileChooser.SELECTED_FILE_CHANGED_PROPERTY.equals(evt.getPropertyName())) {
-                        JFileChooser chooser = (JFileChooser) evt.getSource();
-                        if (chooser.getSelectedFile() != null) {
-                            fileTextField.setText(chooser.getSelectedFile().getName());
-                        }
-                    }
-                }
-            });
+            
             int returnVal = chooser.showOpenDialog((java.awt.Component) null);
             File inFile = null;
             if (returnVal == chooser.APPROVE_OPTION) {
+                // to populate the text field
+                chooser.addPropertyChangeListener(JFileChooser.SELECTED_FILE_CHANGED_PROPERTY, new PropertyChangeListener() {
+                    public void propertyChange(PropertyChangeEvent evt) {
+                        if (JFileChooser.SELECTED_FILE_CHANGED_PROPERTY.equals(evt.getPropertyName())) {
+                            JFileChooser chooser = (JFileChooser) evt.getSource();
+                            if (chooser.getSelectedFile() != null) {
+                                fileTextField.setText(chooser.getSelectedFile().getName());
+                            }
+                        }
+                    }
+                });
                 inFile = chooser.getSelectedFile();
                 System.out.println("Selected File: " + inFile.getAbsolutePath());
-
+                
+                if (this.msmlTextArea.getText() != null) {
+                    this.msmlTextArea.setText("");
+                }
                 // to display the file contents to the msml script text area
                 JTextArea text = this.msmlTextArea;
                 DefaultCaret caret = (DefaultCaret) msmlTextArea.getCaret();
                 caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
                 BufferedReader in = new BufferedReader(new FileReader(inFile));
-
+                
                 String line = in.readLine();
                 while (line != null) {
                     text.append(line + "\n");
                     line = in.readLine();
                 }
             } else if (returnVal == chooser.CANCEL_OPTION) {
-                System.out.println("Open command cancelled by the user");
+                System.out.println("No file selected");
             }
         } catch (IOException ex) {
             logger.log(Level.SEVERE, ex.getMessage(), ex);
         }
-    }//GEN-LAST:event_fileButtonMouseClicked
-
-    private void hangupButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_hangupButtonMouseClicked
-        app.hangup();
-        callButton.setEnabled(true);
-        hangupButton.setEnabled(false);
-        userText.setEnabled(true);
-        addressText.setEnabled(true);
-    }//GEN-LAST:event_hangupButtonMouseClicked
-
-    private void sendMsmlButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_sendMsmlButtonMouseClicked
-        DefaultCaret caret = (DefaultCaret) msmlTextArea.getCaret();
-        caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
-        app.sendMsml(this.msmlTextArea.getText());
-
-        while (Connector.responseMessage != null && Connector.responseMessage.length() > 0) {
-            this.responseTextArea.setText(Connector.responseMessage);
-        }
-
-    }//GEN-LAST:event_sendMsmlButtonMouseClicked
-
-    private void clearButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_clearButtonMouseClicked
-        this.msmlTextArea.setText("");
-    }//GEN-LAST:event_clearButtonMouseClicked
-
+    }//GEN-LAST:event_fileButtonActionPerformed
+    
     private void clearButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearButtonActionPerformed
-        // TODO add your handling code here:
+        this.msmlTextArea.setText("");
     }//GEN-LAST:event_clearButtonActionPerformed
-
-    private void clearResponseButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_clearResponseButtonMouseClicked
-        this.responseTextArea.setText("");
-    }//GEN-LAST:event_clearResponseButtonMouseClicked
-
+    
     private void clearResponseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearResponseButtonActionPerformed
-        // TODO add your handling code here:
+        this.responseTextArea.setText("");
     }//GEN-LAST:event_clearResponseButtonActionPerformed
-
-    private void saveMsmlScriptButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_saveMsmlScriptButtonMouseClicked
+    
+    private void saveMsmlScriptButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveMsmlScriptButtonActionPerformed
         final JFileChooser SaveAs = new JFileChooser();
         SaveAs.setApproveButtonText("Save");
         int actionDialog = SaveAs.showOpenDialog(this);
         if (actionDialog != JFileChooser.APPROVE_OPTION) {
             return;
         }
-
+        
         File fileName = new File(SaveAs.getSelectedFile() + ".txt");
         BufferedWriter outFile = null;
         try {
@@ -515,35 +467,19 @@ public class CallUIForm extends javax.swing.JFrame {
                 }
             }
         }
-    }//GEN-LAST:event_saveMsmlScriptButtonMouseClicked
-
-    private void saveResponseButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_saveResponseButtonMouseClicked
-        final JFileChooser SaveAs = new JFileChooser();
-        SaveAs.setApproveButtonText("Save");
-        int actionDialog = SaveAs.showOpenDialog(this);
-        if (actionDialog != JFileChooser.APPROVE_OPTION) {
-            return;
+    }//GEN-LAST:event_saveMsmlScriptButtonActionPerformed
+    
+    private void sendMsmlButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendMsmlButtonActionPerformed
+        DefaultCaret caret = (DefaultCaret) msmlTextArea.getCaret();
+        caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+        app.sendMsml(this.msmlTextArea.getText());
+        
+        while (Connector.responseMessage != null && Connector.responseMessage.length() > 0) {
+            this.responseTextArea.setText(Connector.responseMessage);
         }
-
-        File fileName = new File(SaveAs.getSelectedFile() + ".txt");
-        BufferedWriter outFile = null;
-        try {
-            outFile = new BufferedWriter(new FileWriter(fileName));
-            this.responseTextArea.write(outFile);
-        } catch (IOException ex) {
-            System.out.println(ex);
-        } finally {
-            if (outFile != null) {
-                try {
-                    outFile.close();
-                } catch (IOException e) {
-                    System.out.println(e);
-                }
-            }
-        }
-    }//GEN-LAST:event_saveResponseButtonMouseClicked
-
-    private void submitButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_submitButtonMouseClicked
+    }//GEN-LAST:event_sendMsmlButtonActionPerformed
+    
+    private void msmlComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_msmlComboBoxActionPerformed
         String itemSelected = (String) msmlComboBox.getSelectedItem();
         switch (itemSelected) {
             case "Play":
@@ -591,14 +527,40 @@ public class CallUIForm extends javax.swing.JFrame {
                 // no item selected
                 break;
         }
-    }//GEN-LAST:event_submitButtonMouseClicked
-
+    }//GEN-LAST:event_msmlComboBoxActionPerformed
+    
+    private void saveResponseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveResponseButtonActionPerformed
+        final JFileChooser SaveAs = new JFileChooser();
+        SaveAs.setApproveButtonText("Save");
+        int actionDialog = SaveAs.showOpenDialog(this);
+        if (actionDialog != JFileChooser.APPROVE_OPTION) {
+            return;
+        }
+        
+        File fileName = new File(SaveAs.getSelectedFile() + ".txt");
+        BufferedWriter outFile = null;
+        try {
+            outFile = new BufferedWriter(new FileWriter(fileName));
+            this.responseTextArea.write(outFile);
+        } catch (IOException ex) {
+            System.out.println(ex);
+        } finally {
+            if (outFile != null) {
+                try {
+                    outFile.close();
+                } catch (IOException e) {
+                    System.out.println(e);
+                }
+            }
+        }
+    }//GEN-LAST:event_saveResponseButtonActionPerformed
+    
     public void updateRecievedMessage(String message) {
         responseTextArea.setText(responseTextArea.getText() + "\n" + timeStamp() + "\n" + message);
         DefaultCaret caret = (DefaultCaret) responseTextArea.getCaret();
         caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
     }
-
+    
     public void updateCallTextArea(Response response) {
         CSeqHeader cSeq = (CSeqHeader) response.getHeader(CSeq.NAME);
         ToHeader toHeader = (ToHeader) response.getHeader("To");
@@ -627,7 +589,7 @@ public class CallUIForm extends javax.swing.JFrame {
                 break;
         }
     }
-
+    
     public void updateCallTextArea() {
         callTextArea.setText(callTextArea.getText() + "\n" + timeStamp() + "\n" + Request.BYE);
         callButton.setEnabled(true);
@@ -748,17 +710,17 @@ public class CallUIForm extends javax.swing.JFrame {
             }
         }
     }
-
+    
     public boolean disableButtons() {
         callButton.setEnabled(false);
         hangupButton.setEnabled(false);
         return Boolean.FALSE;
     }
-
+    
     private String timeStamp() {
         return new SimpleDateFormat("[HH:mm:ss.SSS] ").format(Calendar.getInstance().getTime());
     }
-
+    
     private void displayInitialMessage() {
         try {
             List<String> lines = ReadFileUtility.readFile();
@@ -767,43 +729,14 @@ public class CallUIForm extends javax.swing.JFrame {
                 port = lines.get(i);
             }
             callTextArea.setText("Waiting for call at " + Inet4Address.getLocalHost().getHostAddress() + ":" + port + "...");
-
+            
         } catch (UnknownHostException ex) {
             logger.log(Level.SEVERE, ex.getMessage(), ex);
         }
     }
-
+    
     public String getUserTextFieldValue() {
         return this.userText.getText();
-    }
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-
-                }
-            }
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
-            logger.log(java.util.logging.Level.SEVERE, ex.getMessage(), ex);
-        }
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new CallUIForm().setVisible(true);
-            }
-        });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -830,7 +763,6 @@ public class CallUIForm extends javax.swing.JFrame {
     private javax.swing.JButton saveMsmlScriptButton;
     private javax.swing.JButton saveResponseButton;
     private javax.swing.JButton sendMsmlButton;
-    private javax.swing.JButton submitButton;
     private javax.swing.JLabel userLabel;
     private javax.swing.JTextField userText;
     // End of variables declaration//GEN-END:variables

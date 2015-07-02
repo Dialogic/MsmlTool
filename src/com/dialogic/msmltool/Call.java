@@ -394,29 +394,17 @@ public class Call {
     public void createInfoRequest(String msml) {
         HeaderFactory headerFactory = sipConnector.getHeaderFactory();
         try {
-            Request infoRequest = this.getDialog().createRequest(Request.INFO);
-            ContentTypeHeader contentTypeHeader = headerFactory.createContentTypeHeader("application", "xml");
-            infoRequest.addHeader(contentTypeHeader);
+            if (this.getDialog() != null) {
+                Request infoRequest = this.getDialog().createRequest(Request.INFO);
+                ContentTypeHeader contentTypeHeader = headerFactory.createContentTypeHeader("application", "xml");
+                infoRequest.addHeader(contentTypeHeader);
 
-            /**
-             * Custom MSML.
-             * <p>
-             * String msmlContent =
-             * "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n" // +
-             * "<msml version=\"1.1\">\n" // +
-             * "<dialogstart target=\"conn:" + call.getDialog().getRemoteTag() + "\" type=\"application/moml+xml\" name=\"DIALOG:AudioPlay\">\n"
-             * // + "	<play >\n" // + "
-             * <audio uri=\"file://verification/greeting.wav\" />\n" // + "
-             * </play>\n" // + "</dialogstart>\n" // + "</msml>";
-             * </p>
-             * call.setContent(msmlContent);
-             */
-            System.out.println("REMOTE TAG -> " + this.getDialog().getRemoteTag());
-            msml = msml.replaceAll("conn:.*?\\\"", "conn:" + this.getDialog().getRemoteTag() + "\"");
-            infoRequest.setContent(msml, contentTypeHeader);
-            System.out.println("CREATING INFO REQUEST TO XMS");
-            sipConnector.sendRequest(infoRequest, this);
-
+                System.out.println("REMOTE TAG -> " + this.getDialog().getRemoteTag());
+                msml = msml.replaceAll("conn:.*?\\\"", "conn:" + this.getDialog().getRemoteTag() + "\"");
+                infoRequest.setContent(msml, contentTypeHeader);
+                System.out.println("CREATING INFO REQUEST TO XMS");
+                sipConnector.sendRequest(infoRequest, this);
+            }
         } catch (SipException | ParseException ex) {
             logger.log(Level.SEVERE, ex.getMessage(), ex);
         }
@@ -543,9 +531,11 @@ public class Call {
      */
     public void createBye() {
         try {
-            Request byeRequest = this.getDialog().createRequest(Request.BYE);
-            System.out.println("CREATE BYE REQUEST ->" + byeRequest);
-            sipConnector.sendRequest(byeRequest, this);
+            if (this.getDialog() != null) {
+                Request byeRequest = this.getDialog().createRequest(Request.BYE);
+                System.out.println("CREATE BYE REQUEST ->" + byeRequest);
+                sipConnector.sendRequest(byeRequest, this);
+            }
         } catch (SipException ex) {
             logger.log(Level.SEVERE, ex.getMessage(), ex);
         }
