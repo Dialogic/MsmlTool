@@ -399,9 +399,13 @@ public class Call {
                 ContentTypeHeader contentTypeHeader = headerFactory.createContentTypeHeader("application", "xml");
                 infoRequest.addHeader(contentTypeHeader);
 
-                System.out.println("REMOTE TAG -> " + this.getDialog().getRemoteTag());
-                msml = msml.replaceAll("conn:.*?\\\"", "conn:" + this.getDialog().getRemoteTag() + "\"");
-                infoRequest.setContent(msml, contentTypeHeader);
+                if (msml.contains("conn:*")) {
+                    infoRequest.setContent(msml, contentTypeHeader);
+                } else {
+                    System.out.println("REMOTE TAG -> " + this.getDialog().getRemoteTag());
+                    msml = msml.replaceAll("conn:.*?\\\"", "conn:" + this.getDialog().getRemoteTag() + "\"");
+                    infoRequest.setContent(msml, contentTypeHeader);
+                }
                 System.out.println("CREATING INFO REQUEST TO XMS");
                 sipConnector.sendRequest(infoRequest, this);
             }
