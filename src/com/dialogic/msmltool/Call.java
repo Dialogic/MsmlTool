@@ -59,6 +59,7 @@ public class Call {
     private String fromUser;
     private String toAddr;
     private String toUser;
+    static boolean isInvite = false;
 
     public Call() {
         this.dialog = null;
@@ -241,6 +242,9 @@ public class Call {
         Request request = requestEvent.getRequest();
         switch (request.getMethod()) {
             case Request.INVITE:
+                if (isInvite) {
+                    doReInviteOk(request);
+                }
                 break;
             case Request.OPTIONS:
                 App.optionsRequest(request, this);
@@ -365,6 +369,7 @@ public class Call {
         sipConnector.register(this);
         System.out.println("CREATING AN INVITE REQUEST TO XMS");
         App.updateCallTextBridgeRequestToXMS(request);
+        isInvite = true;
         sipConnector.sendRequest(request, this);
 
     }
@@ -560,7 +565,7 @@ public class Call {
         }
     }
 
-    public void doReInviteOk(Call call, Request request) {
+    public void doReInviteOk(Request request) {
         MessageFactory messageFactory = sipConnector.getMessageFactory();
         AddressFactory addressFactory = sipConnector.getAddressFactory();
         HeaderFactory headerFactory = sipConnector.getHeaderFactory();
@@ -583,11 +588,8 @@ public class Call {
 
             AllowHeader allowHeader = headerFactory.createAllowHeader("INVITE, BYE, ACK, CANCEL, OPTIONS, INFO");
             okResponse.addHeader(allowHeader);
-            ContentTypeHeader contentTypeHeader = headerFactory.createContentTypeHeader("application", "sdp");
 
-            okResponse.setContent(request.getContent(), contentTypeHeader);
-            ResponseEvent responseEvent = new ResponseEvent(sipConnector.sipProvider, null, call.getServerTransaction().getDialog(), okResponse);
-            sipConnector.processResponse(responseEvent);
+            sipConnector.sendResponse(okResponse, this);
         } catch (ParseException | InvalidArgumentException ex) {
             logger.log(Level.SEVERE, ex.getMessage(), ex);
         }
@@ -659,5 +661,6 @@ public class Call {
         App app = new App();
         Request request = reqEvent.getRequest();
         app.makeCall(request, inboundCall);
+        isInvite = true;
     }
 }

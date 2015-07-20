@@ -40,6 +40,7 @@ import javax.sip.TransactionTerminatedEvent;
 import javax.sip.TransactionUnavailableException;
 import javax.sip.TransportNotSupportedException;
 import javax.sip.header.CSeqHeader;
+import javax.sip.header.CallIdHeader;
 import javax.sip.header.HeaderFactory;
 import javax.sip.message.MessageFactory;
 import javax.sip.message.Request;
@@ -163,16 +164,25 @@ public class Connector implements SipListener {
         Call call;
         switch (request.getMethod()) {
             case Request.INVITE:
-                System.out.println(timeStamp() + "INVITE RECIEVED -> " + request);
-                if (inboundCall == null) {
-                    inboundCall = new Call();
+                call = callMapXms.get(((CallIdHeader) request.getHeader(CallIdHeader.NAME)).getCallId());
+                if (call != null) {
+                    System.out.println(timeStamp() + "REINVITE RECIEVED -> " + request);
+                    call.setServerTransaction(serverTransaction);
+                    call.handleStackRequest(requestEvent);
+                } else {
+                    if (callMapXms.isEmpty()) {
+                        System.out.println(timeStamp() + "INVITE RECIEVED -> " + request);
+                        if (inboundCall == null) {
+                            inboundCall = new Call();
+                        }
+                        inboundCall.setInviteRequest(request);
+                        inboundCall.setSdp(new String(request.getRawContent()));
+                        inboundCall.setServerTransaction(serverTransaction);
+                        inboundCall.setDialog(requestEvent.getDialog());
+                        callMapIncoming.put(request, inboundCall);
+                        inboundCall.notifyApp(requestEvent, inboundCall);
+                    }
                 }
-                inboundCall.setInviteRequest(request);
-                inboundCall.setSdp(new String(request.getRawContent()));
-                inboundCall.setServerTransaction(serverTransaction);
-                inboundCall.setDialog(requestEvent.getDialog());
-                callMapIncoming.put(request, inboundCall);
-                inboundCall.notifyApp(requestEvent, inboundCall);
                 break;
             case Request.OPTIONS:
                 System.out.println(timeStamp() + "OPTIONS RECIEVED -> " + request);
@@ -227,13 +237,16 @@ public class Connector implements SipListener {
                 break;
             case Request.CANCEL:
                 System.out.println(timeStamp() + "CANCEL RECIEVED -> " + request);
-                call = callMapXms.get(requestEvent.getDialog().getCallId().getCallId());
-                if (call == null) {
+                call = callMapIncoming.get(requestEvent.getDialog().getCallId().getCallId());
+                if (call != null) {
                     inboundCall.setServerTransaction(serverTransaction);
                     inboundCall.handleStackRequest(requestEvent);
                 } else {
-                    call.setServerTransaction(serverTransaction);
-                    call.handleStackRequest(requestEvent);
+                    call = callMapXms.get(requestEvent.getDialog().getCallId().getCallId());
+                    if (call != null) {
+                        call.setServerTransaction(serverTransaction);
+                        call.handleStackRequest(requestEvent);
+                    }
                 }
                 break;
         }
