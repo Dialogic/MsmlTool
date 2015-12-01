@@ -6,14 +6,19 @@
 package com.dialogic.msmltool;
 
 import java.io.BufferedWriter;
-import java.io.FileWriter;
+import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 /**
  *
@@ -21,29 +26,24 @@ import javax.swing.JOptionPane;
  */
 public class XMSForm extends javax.swing.JFrame {
 
-    App app = new App();
+    MsmlApp app;
 
     /**
      * Creates new form XMSForm
+     *
+     * @param msmlApp
      */
-    public XMSForm() {
+    private XMSForm(MsmlApp msmlApp) {
+        this.app = msmlApp;
         initComponents();
         this.setResizable(false);
 
-        String ipAdr = null;
-        String port = null;
-        List<String> lines = ReadFileUtility.readFile();
-
-        for (int i = 1; i < lines.size(); i += 2) {
-            ipAdr = lines.get(i - 1);
-            port = lines.get(i);
-        }
-        ipAddressTextField.setText(ipAdr);
-        localPortTextField.setText(port);
+        ipAddressTextField.setText(ReadFileUtility.getValue("baseurl"));
+        localPortTextField.setText(ReadFileUtility.getValue("port"));
     }
 
-    public static void initialize() {
-        XMSForm xmsForm = new XMSForm();
+    public static void initialize(MsmlApp msmlApp) {
+        XMSForm xmsForm = new XMSForm(msmlApp);
         xmsForm.setVisible(true);
         xmsForm.setLocationRelativeTo(null);
     }
@@ -160,19 +160,51 @@ public class XMSForm extends javax.swing.JFrame {
                         JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            App.setXMSAdr(ipAddressTextField.getText());
-            this.dispose();
-            outfile = new BufferedWriter(new FileWriter("IpAddress.txt"));
-            outfile.write(ipAddressTextField.getText());
-            outfile.newLine();
-            outfile.write(localPortTextField.getText());
-            List<String> lines = new ArrayList<>();
-            lines.add(ipAddressTextField.getText());
-            lines.add(localPortTextField.getText());
+
+            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            Transformer transformer = transformerFactory.newTransformer();
+            //DOMSource source = getXMLSource();
+            DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+
+            org.w3c.dom.Document doc = docBuilder.newDocument();
+
+            org.w3c.dom.Element rootElement = doc.createElement("xmsconfig");
+            doc.appendChild(rootElement);
+
+            org.w3c.dom.Element port = doc.createElement("port");
+            port.appendChild(doc.createTextNode(localPortTextField.getText()));
+            rootElement.appendChild(port);
+
+            org.w3c.dom.Element techType = doc.createElement("appid");
+            techType.appendChild(doc.createTextNode("msml"));
+            rootElement.appendChild(techType);
+
+            org.w3c.dom.Element baseurl = doc.createElement("baseurl");
+            baseurl.appendChild(doc.createTextNode(ipAddressTextField.getText()));
+            rootElement.appendChild(baseurl);
+
+            DOMSource source = new DOMSource(doc);
+
+            StreamResult result = new StreamResult(new File("ConnectorConfig.xml"));
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+            transformer.transform(source, result);
+
+//            this.app.setXMSAdr(ipAddressTextField.getText());
+//            this.dispose();
+//            outfile = new BufferedWriter(new FileWriter("IpAddress.txt"));
+//            outfile.write(ipAddressTextField.getText());
+//            outfile.newLine();
+//            outfile.write(localPortTextField.getText());
+//            List<String> lines = new ArrayList<>();
+//            lines.add(ipAddressTextField.getText());
+//            lines.add(localPortTextField.getText());
             // set the values for the connector to get the port entered by the user
-            ReadFileUtility.setLines(lines);
-            app.createCallForm();
-        } catch (IOException ex) {
+            //ReadFileUtility.setLines(lines);
+            this.dispose();
+            this.app.createCallForm();
+        } catch (Exception ex) {
             Logger.getLogger(XMSForm.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
         } finally {
             if (outfile != null) {

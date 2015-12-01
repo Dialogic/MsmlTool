@@ -96,4 +96,43 @@ public class ReadFileUtility {
     public static void setLines(List<String> data) {
         lines = data;
     }
+
+    /**
+     * This function gets the XMS related data from the config file
+     *
+     * @param name
+     * @return
+     */
+    public static String getValue(String name) {
+        try {
+            File file = new File("ConnectorConfig.xml");
+            if (file.exists()) {
+                FileInputStream xmlFile = new FileInputStream(file);
+                Document doc = new Builder().build(xmlFile);
+                Element root = doc.getRootElement();
+                Elements entries = root.getChildElements();
+                for (int x = 0; x < entries.size(); x++) {
+                    Element element = entries.get(x);
+                    if (element.getLocalName().equals("appid")) {
+                        if (name.equalsIgnoreCase("appid")) {
+                            return element.getValue();
+                        }
+                    }
+                    if (element.getLocalName().equals("baseurl")) {
+                        if (name.equalsIgnoreCase("baseurl")) {
+                            return element.getValue();
+                        }
+                    }
+                    if (element.getLocalName().equals("port")) {
+                        if (name.equalsIgnoreCase("port")) {
+                            return element.getValue();
+                        }
+                    }
+                }
+            }
+        } catch (ParsingException | IOException ex) {
+            Logger.getLogger(ReadFileUtility.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
+        }
+        return null;
+    }
 }

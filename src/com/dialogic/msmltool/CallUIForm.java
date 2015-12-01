@@ -6,6 +6,7 @@
 package com.dialogic.msmltool;
 
 import gov.nist.javax.sip.header.CSeq;
+import java.awt.HeadlessException;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.BufferedReader;
@@ -33,20 +34,33 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.text.DefaultCaret;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import org.w3c.dom.DOMException;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 /**
  *
  * @author ssatyana
  */
 public class CallUIForm extends javax.swing.JFrame {
-    
+
     static final Logger logger = Logger.getLogger(CallUIForm.class.getName());
-    App app = new App();
+    MsmlApp app;
 
     /**
      * Creates new form CallForm
      */
-    private CallUIForm() {
+    private CallUIForm(MsmlApp msmlApp) {
+        this.app = msmlApp;
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
@@ -63,19 +77,19 @@ public class CallUIForm extends javax.swing.JFrame {
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         hangupButton.setEnabled(false);
         userText.setText("msml");
-        addressText.setText(App.getXMSAdr());
+        addressText.setText(ReadFileUtility.getValue("baseurl"));
         displayInitialMessage();
-        
+
         this.addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-                app.close();
+                msmlApp.close();
             }
         });
     }
-    
-    public static CallUIForm initialize() {
-        CallUIForm callForm = new CallUIForm();
+
+    public static CallUIForm initialize(MsmlApp msmlApp) {
+        CallUIForm callForm = new CallUIForm(msmlApp);
         callForm.setVisible(true);
         callForm.setLocationRelativeTo(null);
         return callForm;
@@ -125,8 +139,11 @@ public class CallUIForm extends javax.swing.JFrame {
             }
         });
 
+        addressLabel.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        addressLabel.setForeground(new java.awt.Color(0, 0, 153));
         addressLabel.setText("IP Address");
 
+        callButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/dialogic/msmltool/images/call.png"))); // NOI18N
         callButton.setText("Call");
         callButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -144,31 +161,36 @@ public class CallUIForm extends javax.swing.JFrame {
             callPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(callPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 474, Short.MAX_VALUE)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 529, Short.MAX_VALUE)
                 .addContainerGap())
         );
         callPanelLayout.setVerticalGroup(
             callPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(callPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 389, Short.MAX_VALUE)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 385, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
-        jTabbedPane1.addTab("Call", callPanel);
+        jTabbedPane1.addTab("Call Flow", callPanel);
 
+        msmlScriptLabel.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        msmlScriptLabel.setForeground(new java.awt.Color(0, 0, 153));
         msmlScriptLabel.setText("MSML Script");
 
         msmlTextArea.setColumns(20);
         msmlTextArea.setRows(5);
         jScrollPane1.setViewportView(msmlTextArea);
 
+        responseLabel.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        responseLabel.setForeground(new java.awt.Color(0, 0, 153));
         responseLabel.setText("Received Response");
 
         responseTextArea.setColumns(20);
         responseTextArea.setRows(5);
         jScrollPane2.setViewportView(responseTextArea);
 
+        fileButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/dialogic/msmltool/images/choose.png"))); // NOI18N
         fileButton.setText("ChooseFile");
         fileButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -176,6 +198,7 @@ public class CallUIForm extends javax.swing.JFrame {
             }
         });
 
+        sendMsmlButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/dialogic/msmltool/images/send.png"))); // NOI18N
         sendMsmlButton.setText("Send");
         sendMsmlButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -183,12 +206,7 @@ public class CallUIForm extends javax.swing.JFrame {
             }
         });
 
-        fileTextField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fileTextFieldActionPerformed(evt);
-            }
-        });
-
+        clearButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/dialogic/msmltool/images/clear.png"))); // NOI18N
         clearButton.setText("Clear");
         clearButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -196,6 +214,7 @@ public class CallUIForm extends javax.swing.JFrame {
             }
         });
 
+        clearResponseButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/dialogic/msmltool/images/clear.png"))); // NOI18N
         clearResponseButton.setText("Clear");
         clearResponseButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -203,6 +222,7 @@ public class CallUIForm extends javax.swing.JFrame {
             }
         });
 
+        saveMsmlScriptButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/dialogic/msmltool/images/save.png"))); // NOI18N
         saveMsmlScriptButton.setText("Save");
         saveMsmlScriptButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -210,6 +230,7 @@ public class CallUIForm extends javax.swing.JFrame {
             }
         });
 
+        saveResponseButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/dialogic/msmltool/images/save.png"))); // NOI18N
         saveResponseButton.setText("Save");
         saveResponseButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -217,7 +238,7 @@ public class CallUIForm extends javax.swing.JFrame {
             }
         });
 
-        msmlComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "None Selected", "Play", "Record", "CreateConf", "DeleteConf" }));
+        msmlComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "None Selected", "Play", "Record", "CreateAudioConf", "CreateVideoConf", "JoinVideoConf", "DeleteConf", "SimpleIVR" }));
         msmlComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 msmlComboBoxActionPerformed(evt);
@@ -237,13 +258,13 @@ public class CallUIForm extends javax.swing.JFrame {
                                 .addGap(18, 18, 18)
                                 .addComponent(saveMsmlScriptButton)
                                 .addGap(18, 18, 18)
-                                .addComponent(sendMsmlButton, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 142, Short.MAX_VALUE))
+                                .addComponent(sendMsmlButton)
+                                .addGap(0, 149, Short.MAX_VALUE))
                             .addComponent(fileTextField))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(msmlComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(fileButton, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(fileButton, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(msmlComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addComponent(jScrollPane1)
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
@@ -254,15 +275,18 @@ public class CallUIForm extends javax.swing.JFrame {
                                 .addComponent(saveResponseButton))
                             .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addContainerGap()
-                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(msmlScriptLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(responseLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                .addComponent(responseLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(msmlScriptLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(3, 3, 3)
                 .addComponent(msmlScriptLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 127, Short.MAX_VALUE)
@@ -279,10 +303,10 @@ public class CallUIForm extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(responseLabel)
                 .addGap(2, 2, 2)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 136, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 132, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(clearResponseButton, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(clearResponseButton)
                     .addComponent(saveResponseButton))
                 .addContainerGap())
         );
@@ -295,8 +319,11 @@ public class CallUIForm extends javax.swing.JFrame {
             }
         });
 
+        userLabel.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        userLabel.setForeground(new java.awt.Color(0, 0, 153));
         userLabel.setText("User");
 
+        hangupButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/dialogic/msmltool/images/hangup.png"))); // NOI18N
         hangupButton.setText("Hangup");
         hangupButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -311,74 +338,104 @@ public class CallUIForm extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jTabbedPane1)
+                    .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(userText)
-                            .addComponent(userLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(18, 18, 18)
+                            .addComponent(userText, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(userLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(addressText)
+                                .addComponent(addressText, javax.swing.GroupLayout.PREFERRED_SIZE, 194, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(callButton, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(hangupButton, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(addressLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addGap(42, 42, 42)))))
-                .addGap(18, 18, 18))
+                                .addComponent(callButton, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(hangupButton, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(addressLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(5, 5, 5)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(userLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(addressLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(userLabel)
+                    .addComponent(addressLabel))
                 .addGap(3, 3, 3)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(userText, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(hangupButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(callButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(addressText, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addComponent(addressText, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(callButton, javax.swing.GroupLayout.DEFAULT_SIZE, 28, Short.MAX_VALUE)
+                    .addComponent(hangupButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(13, 13, 13)
                 .addComponent(jTabbedPane1)
                 .addContainerGap())
         );
+
+        jTabbedPane1.getAccessibleContext().setAccessibleName("Call Flow");
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     //capturing the address for the call
     private void addressTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addressTextActionPerformed
-        
+
     }//GEN-LAST:event_addressTextActionPerformed
-    
+
     private void callButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_callButtonActionPerformed
-        if (userText.getText().isEmpty() || addressText.getText().isEmpty()) {
-            JOptionPane.showMessageDialog(new JFrame(), "Please Enter User and XMS IP Address", "Dialog",
-                    JOptionPane.ERROR_MESSAGE);
-            return;
+        try {
+            if (userText.getText().isEmpty() || addressText.getText().isEmpty()) {
+                JOptionPane.showMessageDialog(new JFrame(), "Please Enter User and XMS IP Address", "Dialog",
+                        JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+
+            org.w3c.dom.Document doc = docBuilder.parse("ConnectorConfig.xml");
+
+            org.w3c.dom.Node rootElement = doc.getFirstChild();
+
+            NodeList list = rootElement.getChildNodes();
+            for (int i = 0; i < list.getLength(); i++) {
+                org.w3c.dom.Node node = list.item(i);
+                if ("appid".equalsIgnoreCase(node.getNodeName())) {
+                    node.setTextContent(userText.getText());
+                }
+                if ("baseurl".equalsIgnoreCase(node.getNodeName())) {
+                    node.setTextContent(addressText.getText());
+                }
+            }
+
+            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            Transformer transformer = transformerFactory.newTransformer();
+            DOMSource source = new DOMSource(doc);
+            StreamResult result = new StreamResult(new File("ConnectorConfig.xml"));
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+            transformer.transform(source, result);
+
+            this.app.makeCall(this.userText.getText(), this.addressText.getText(), null);
+            callButton.setEnabled(false);
+            hangupButton.setEnabled(true);
+            userText.setEnabled(false);
+            addressText.setEnabled(false);
+        } catch (HeadlessException | ParserConfigurationException | SAXException | IOException | DOMException | IllegalArgumentException | TransformerException ex) {
+            Logger.getLogger(CallUIForm.class.getName()).log(Level.SEVERE, null, ex);
         }
-        app.makeCall(this.userText.getText(), this.addressText.getText(), null);
-        callButton.setEnabled(false);
-        hangupButton.setEnabled(true);
-        userText.setEnabled(false);
-        addressText.setEnabled(false);
     }//GEN-LAST:event_callButtonActionPerformed
-    
+
     private void userTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_userTextActionPerformed
         System.out.println("Entered text" + this.userText.getText());
     }//GEN-LAST:event_userTextActionPerformed
-    
+
     public String getUser() {
         return this.userText.getText();
     }
-    
+
     private void hangupButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hangupButtonActionPerformed
-        app.hangup();
+        this.app.hangup();
         callButton.setEnabled(true);
         hangupButton.setEnabled(false);
         userText.setEnabled(true);
@@ -386,16 +443,12 @@ public class CallUIForm extends javax.swing.JFrame {
         this.dispose();
         System.exit(0);
     }//GEN-LAST:event_hangupButtonActionPerformed
-    
-    private void fileTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fileTextFieldActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_fileTextFieldActionPerformed
-    
+
     private void fileButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fileButtonActionPerformed
         try {
             JFileChooser chooser = new JFileChooser("");
             chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-            
+
             int returnVal = chooser.showOpenDialog((java.awt.Component) null);
             File inFile = null;
             if (returnVal == chooser.APPROVE_OPTION) {
@@ -412,7 +465,7 @@ public class CallUIForm extends javax.swing.JFrame {
                 });
                 inFile = chooser.getSelectedFile();
                 System.out.println("Selected File: " + inFile.getAbsolutePath());
-                
+
                 if (this.msmlTextArea.getText() != null) {
                     this.msmlTextArea.setText("");
                 }
@@ -421,7 +474,7 @@ public class CallUIForm extends javax.swing.JFrame {
                 DefaultCaret caret = (DefaultCaret) msmlTextArea.getCaret();
                 caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
                 BufferedReader in = new BufferedReader(new FileReader(inFile));
-                
+
                 String line = in.readLine();
                 while (line != null) {
                     text.append(line + "\n");
@@ -434,15 +487,15 @@ public class CallUIForm extends javax.swing.JFrame {
             logger.log(Level.SEVERE, ex.getMessage(), ex);
         }
     }//GEN-LAST:event_fileButtonActionPerformed
-    
+
     private void clearButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearButtonActionPerformed
         this.msmlTextArea.setText("");
     }//GEN-LAST:event_clearButtonActionPerformed
-    
+
     private void clearResponseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearResponseButtonActionPerformed
         this.responseTextArea.setText("");
     }//GEN-LAST:event_clearResponseButtonActionPerformed
-    
+
     private void saveMsmlScriptButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveMsmlScriptButtonActionPerformed
         final JFileChooser SaveAs = new JFileChooser();
         SaveAs.setApproveButtonText("Save");
@@ -450,7 +503,7 @@ public class CallUIForm extends javax.swing.JFrame {
         if (actionDialog != JFileChooser.APPROVE_OPTION) {
             return;
         }
-        
+
         File fileName = new File(SaveAs.getSelectedFile() + ".txt");
         BufferedWriter outFile = null;
         try {
@@ -468,58 +521,139 @@ public class CallUIForm extends javax.swing.JFrame {
             }
         }
     }//GEN-LAST:event_saveMsmlScriptButtonActionPerformed
-    
+
     private void sendMsmlButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendMsmlButtonActionPerformed
         DefaultCaret caret = (DefaultCaret) msmlTextArea.getCaret();
         caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
-        app.sendMsml(this.msmlTextArea.getText());
-        
-        while (Connector.responseMessage != null && Connector.responseMessage.length() > 0) {
-            this.responseTextArea.setText(Connector.responseMessage);
-        }
+        this.app.sendMsml(this.msmlTextArea.getText());
+
+//        while (Connector.responseMessage != null && Connector.responseMessage.length() > 0) {
+//            this.responseTextArea.setText(Connector.responseMessage);
+//        }
     }//GEN-LAST:event_sendMsmlButtonActionPerformed
-    
+
     private void msmlComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_msmlComboBoxActionPerformed
         String itemSelected = (String) msmlComboBox.getSelectedItem();
         switch (itemSelected) {
             case "Play":
-                String play = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n"
-                        + "<msml version=\"1.1\">\n"
-                        + "<dialogstart target=\"conn:1234\" type=\"application/moml+xml\" name=\"DIALOG:AudioPlay\">\n"
-                        + "	<play >\n"
-                        + "		<audio uri=\"file://verification/greeting.wav\" />\n"
-                        + "	</play>\n"
-                        + "</dialogstart>\n"
+                String play = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
+                        + "<msml version=\"1.1\" xmlns:ns2=\"http://www.dialogic.com/DialogicTypes\">\n"
+                        + "    <dialogstart target=\"conn:1234\" type=\"application/moml+xml\" name=\"Play\">\n"
+                        + "        <group topology=\"parallel\">\n"
+                        + "            <play>\n"
+                        + "                <media>\n"
+                        + "                    <audio uri=\"file://verification/greeting.wav\" format=\"audio/wav;codec=L16\" audiosamplerate=\"16000\" audiosamplesize=\"16\"/>\n"
+                        + "                </media>\n"
+                        + "                <playexit>\n"
+                        + "                    <exit namelist=\"play.end play.amt\"/>\n"
+                        + "                </playexit>\n"
+                        + "            </play>\n"
+                        + "            <collect>\n"
+                        + "                <pattern digits=\"#\">\n"
+                        + "                    <send event=\"TermkeyRecieved\" target=\"source\" namelist=\"dtmf.digits dtmf.len dtmf.end\"/>\n"
+                        + "                    <send event=\"terminate\" target=\"play\"/>\n"
+                        + "                </pattern>\n"
+                        + "            </collect>\n"
+                        + "        </group>\n"
+                        + "    </dialogstart>\n"
                         + "</msml>";
                 msmlTextArea.setText(play);
                 break;
             case "Record":
-                String record = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n"
-                        + "<msml version=\"1.1\">\n"
-                        + "<dialogstart target=\"conn:1234\" type=\"application/moml+xml\">\n"
-                        + "	<record beep=\"true\" dest=\"file://recorded/Test.wav\" format=\"audio/wav\" maxtime=\"10s\">\n"
-                        + "		<recordexit>\n"
-                        + "			<send target=\"group\" event=\"terminate\"/>\n"
-                        + "		</recordexit>\n"
-                        + "	</record>\n"
-                        + "</dialogstart>\n"
+                String record = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
+                        + "<msml version=\"1.1\" xmlns:ns2=\"http://www.dialogic.com/DialogicTypes\">\n"
+                        + "    <dialogstart target=\"conn:1234\" type=\"application/moml+xml\" name=\"Record\">\n"
+                        + "        <group topology=\"parallel\">\n"
+                        + "            <record beep=\"true\" audiodest=\"file://recorded/Test.wav\" format=\"audio/wav;codec=L16\" audiosamplerate=\"16000\" audiosamplesize=\"16\" maxtime=\"10s\">\n"
+                        + "                <recordexit>\n"
+                        + "                    <exit namelist=\"record.end record.len\"/>\n"
+                        + "                </recordexit>\n"
+                        + "            </record>\n"
+                        + "            <collect>\n"
+                        + "                <pattern digits=\"#\">\n"
+                        + "                    <send event=\"TermkeyRecieved\" target=\"source\" namelist=\"dtmf.digits dtmf.len dtmf.last\"/>\n"
+                        + "                    <send event=\"terminate\" target=\"record\"/>\n"
+                        + "                </pattern>\n"
+                        + "            </collect>\n"
+                        + "        </group>\n"
+                        + "    </dialogstart>\n"
                         + "</msml>";
                 msmlTextArea.setText(record);
                 break;
-            case "CreateConf":
-                String createConference = "<msml version=\"1.1\">\n"
-                        + "<createconference name=\"491230000001\" deletewhen=\"nocontrol\" mark=\"1\" term=\"true\">\n"
-                        + "<audiomix id=\"mix491230000001\"/>\n"
+            case "CreateAudioConf":
+                String createConferenceAudio = "<msml version=\"1.1\">\n"
+                        + "<createconference name=\"XMSConference_1\" deletewhen=\"nomedia\" mark=\"1\" term=\"true\">\n"
+                        + "<audiomix id=\"mix12345\"/>\n"
                         + "</createconference>\n"
-                        + "<join id1=\"conf:491230000001\" id2=\"conn:1234\" mark=\"2\">\n"
+                        + "<join id1=\"conf:XMSConference_1\" id2=\"conn:1234\" mark=\"2\">\n"
                         + "<stream media=\"audio\"/>\n"
                         + "</join>\n"
                         + "</msml>";
-                msmlTextArea.setText(createConference);
+                msmlTextArea.setText(createConferenceAudio);
+                break;
+            case "CreateVideoConf":
+                String createConferenceVideo = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
+                        + "<msml version=\"1.1\" xmlns:ns2=\"http://www.dialogic.com/DialogicTypes\">\n"
+                        + "    <createconference name=\"XMSConference_1\" deletewhen=\"nomedia\" term=\"true\" mark=\"1\">\n"
+                        + "        <videolayout>\n"
+                        + "            <root size=\"VGA\"/>\n"
+                        + "            <region id=\"1\" left=\"0\" top=\"0\" relativesize=\"1/2\"/>\n"
+                        + "            <region id=\"2\" left=\"50%\" top=\"0\" relativesize=\"1/2\"/>\n"
+                        + "            <region id=\"3\" left=\"0\" top=\"50%\" relativesize=\"1/2\"/>\n"
+                        + "            <region id=\"4\" left=\"50%\" top=\"50%\" relativesize=\"1/2\"/>\n"
+                        + "        </videolayout>\n"
+                        + "    </createconference>\n"
+                        + "</msml>";
+                msmlTextArea.setText(createConferenceVideo);
+                break;
+            case "JoinVideoConf":
+                String joinConf = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
+                        + "<msml version=\"1.1\" xmlns:ns2=\"http://www.dialogic.com/DialogicTypes\">\n"
+                        + "    <join id1=\"conn:1234\" id2=\"conf:XMSConference_1\" mark=\"1\">\n"
+                        + "        <stream media=\"audio\"/>\n"
+                        + "        <stream display=\"1\" dir=\"from-id1\" media=\"video\"/>\n"
+                        + "        <stream dir=\"to-id1\" media=\"video\"/>\n"
+                        + "    </join>\n"
+                        + "</msml>";
+                msmlTextArea.setText(joinConf);
+                break;
+            case "SimpleIVR":
+                String collect = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
+                        + "<msml version=\"1.1\" xmlns:ns2=\"http://www.dialogic.com/DialogicTypes\">\n"
+                        + "    <dialogstart target=\"conn:1234\" type=\"application/moml+xml\" name=\"Collect\">\n"
+                        + "        <group topology=\"parallel\">\n"
+                        + "            <play barge=\"true\" cleardb=\"true\">\n"
+                        + "                <media>\n"
+                        + "                    <audio uri=\"file://verification/play_menu.wav\"/>\n"
+                        + "                </media>\n"
+                        + "                <playexit>\n"
+                        + "                    <send event=\"starttimer\" target=\"collect\"/>\n"
+                        + "                </playexit>\n"
+                        + "            </play>\n"
+                        + "            <collect cleardb=\"true\" fdt=\"20s\" idt=\"2s\" starttimer=\"true\">\n"
+                        + "                <pattern digits=\"#\">\n"
+                        + "                    <send event=\"termKey\" target=\"source\" namelist=\"dtmf.digits dtmf.len dtmf.end\"/>\n"
+                        + "                </pattern>\n"
+                        + "                <pattern digits=\"x\"/>\n"
+                        + "                <noinput>\n"
+                        + "                    <send event=\"noinput\" target=\"source\" namelist=\"dtmf.digits dtmf.len dtmf.end\"/>\n"
+                        + "                </noinput>\n"
+                        + "                <nomatch>\n"
+                        + "                    <send event=\"nomatch\" target=\"source\" namelist=\"dtmf.digits dtmf.len dtmf.end\"/>\n"
+                        + "                </nomatch>\n"
+                        + "                <dtmfexit>\n"
+                        + "                    <send event=\"dtmfexit\" target=\"source\" namelist=\"dtmf.digits dtmf.len dtmf.end\"/>\n"
+                        + "                </dtmfexit>\n"
+                        + "            </collect>\n"
+                        + "        </group>\n"
+                        + "    </dialogstart>\n"
+                        + "</msml>";
+                msmlTextArea.setText(collect);
                 break;
             case "DeleteConf":
-                String deleteConference = "<msml version=\"1.1\">\n"
-                        + "<destroyconference id=\"conf:491230000001\" mark=\"1\" />\n"
+                String deleteConference = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
+                        + "<msml version=\"1.1\" xmlns:ns2=\"http://www.dialogic.com/DialogicTypes\">\n"
+                        + "    <destroyconference id=\"conf:XMSConference_1\" mark=\"1\" />\n"
                         + "</msml>";
                 msmlTextArea.setText(deleteConference);
                 break;
@@ -528,7 +662,7 @@ public class CallUIForm extends javax.swing.JFrame {
                 break;
         }
     }//GEN-LAST:event_msmlComboBoxActionPerformed
-    
+
     private void saveResponseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveResponseButtonActionPerformed
         final JFileChooser SaveAs = new JFileChooser();
         SaveAs.setApproveButtonText("Save");
@@ -536,7 +670,7 @@ public class CallUIForm extends javax.swing.JFrame {
         if (actionDialog != JFileChooser.APPROVE_OPTION) {
             return;
         }
-        
+
         File fileName = new File(SaveAs.getSelectedFile() + ".txt");
         BufferedWriter outFile = null;
         try {
@@ -554,13 +688,19 @@ public class CallUIForm extends javax.swing.JFrame {
             }
         }
     }//GEN-LAST:event_saveResponseButtonActionPerformed
-    
+
+    /**
+     * Updates the call text area with info requests sent and responses
+     * received.
+     *
+     * @param message
+     */
     public void updateRecievedMessage(String message) {
         responseTextArea.setText(responseTextArea.getText() + "\n" + timeStamp() + "\n" + message);
         DefaultCaret caret = (DefaultCaret) responseTextArea.getCaret();
         caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
     }
-    
+
     public void updateCallTextArea(Response response) {
         CSeqHeader cSeq = (CSeqHeader) response.getHeader(CSeq.NAME);
         ToHeader toHeader = (ToHeader) response.getHeader("To");
@@ -589,7 +729,7 @@ public class CallUIForm extends javax.swing.JFrame {
                 break;
         }
     }
-    
+
     public void updateCallTextArea() {
         callTextArea.setText(callTextArea.getText() + "\n" + timeStamp() + "\n" + Request.BYE);
         callButton.setEnabled(true);
@@ -652,6 +792,19 @@ public class CallUIForm extends javax.swing.JFrame {
         }
     }
 
+    public void updateCallTextAreaWithCustomMessage(String reqFromAddress, String reqToAddress, String message) {
+        if (message.equalsIgnoreCase("ACK")) {
+            callTextArea.setText(callTextArea.getText() + "\n" + timeStamp()
+                    + "\nSend ACK from " + reqFromAddress + " to " + reqToAddress);
+        } else if (message.equalsIgnoreCase("RINGING")) {
+            callTextArea.setText(callTextArea.getText() + "\n" + timeStamp()
+                    + "\nSend 180 RINGING for INVITE from " + reqFromAddress + " to " + reqToAddress);
+        } else if (message.equalsIgnoreCase("200OK")) {
+            callTextArea.setText(callTextArea.getText() + "\n" + timeStamp()
+                    + "\nSend 200 OK for INVITE from " + reqFromAddress + " to " + reqToAddress);
+        }
+    }
+
     /**
      * Displays the requests received and responses sent to the soft phone in
      * bridge mode. Information is displayed in the call tab.
@@ -668,7 +821,7 @@ public class CallUIForm extends javax.swing.JFrame {
             switch (request.getMethod()) {
                 case Request.INVITE:
                     callTextArea.setText(callTextArea.getText() + "\n" + timeStamp() + "\nReceived "
-                            + request.getMethod() + " from " + reqFromAddress + " to " + reqToAddress);
+                            + request.getMethod() + " from " + reqFromAddress + " to " + reqToAddress + ":" + ReadFileUtility.getValue("port"));
                     break;
                 case Request.OPTIONS:
                     callTextArea.setText(callTextArea.getText() + "\n" + timeStamp() + "\nReceived "
@@ -710,31 +863,31 @@ public class CallUIForm extends javax.swing.JFrame {
             }
         }
     }
-    
+
     public boolean disableButtons() {
         callButton.setEnabled(false);
         hangupButton.setEnabled(false);
         return Boolean.FALSE;
     }
-    
+
     private String timeStamp() {
         return new SimpleDateFormat("[HH:mm:ss.SSS] ").format(Calendar.getInstance().getTime());
     }
-    
+
     private void displayInitialMessage() {
         try {
-            List<String> lines = ReadFileUtility.readFile();
-            String port = null;
-            for (int i = 1; i < lines.size(); i += 2) {
-                port = lines.get(i);
-            }
-            callTextArea.setText("Waiting for call at " + Inet4Address.getLocalHost().getHostAddress() + ":" + port + "...");
-            
+//            List<String> lines = ReadFileUtility.readFile();
+//            String port = null;
+//            for (int i = 1; i < lines.size(); i += 2) {
+//                port = lines.get(i);
+//            }
+            callTextArea.setText("Waiting for call at " + Inet4Address.getLocalHost().getHostAddress() + ":" + Integer.parseInt(ReadFileUtility.getValue("port")) + "...");
+
         } catch (UnknownHostException ex) {
             logger.log(Level.SEVERE, ex.getMessage(), ex);
         }
     }
-    
+
     public String getUserTextFieldValue() {
         return this.userText.getText();
     }

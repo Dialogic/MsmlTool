@@ -1,0 +1,168 @@
+<!-- Use the  Trace Viewer in src/tools/tracesviewer to view this  trace  
+Here are the stack configuration properties 
+javax.sip.IP_ADDRESS= 10.20.120.13
+javax.sip.STACK_NAME= SipCall
+javax.sip.ROUTER_PATH= null
+javax.sip.OUTBOUND_PROXY= null
+-->
+<description
+ logDescription="SipCall"
+ name="SipCall"
+ auxInfo="null"/>
+ 
+<message
+from="10.20.120.13:5070" 
+to="146.152.64.141:5060" 
+time="1448981868211"
+isSender="true" 
+transactionId="z9hg4bkf9e60a43cf02f093e4adf56b9879cdb8" 
+callId="b681a3b052bad932b00045c121778201@10.20.120.13" 
+firstLine="INVITE sip:msml@146.152.64.141 SIP/2.0" 
+>
+<![CDATA[INVITE sip:msml@146.152.64.141 SIP/2.0
+Call-ID: b681a3b052bad932b00045c121778201@10.20.120.13
+CSeq: 1 INVITE
+From: <sip:MsmlTool@10.20.120.13>;tag=1684c46
+To: <sip:msml@146.152.64.141>
+Via: SIP/2.0/UDP 10.20.120.13:5070;branch=z9hG4bKf9e60a43cf02f093e4adf56b9879cdb8
+Max-Forwards: 70
+Content-Type: application/sdp
+Contact: <sip:MsmlTool@10.20.120.13:5070>
+Content-Length: 204
+
+]]>
+</message>
+
+<message
+from="146.152.64.141:5060" 
+to="10.20.120.13:5070" 
+time="1448981868273"
+isSender="false" 
+transactionId="z9hg4bkf9e60a43cf02f093e4adf56b9879cdb8" 
+callId="b681a3b052bad932b00045c121778201@10.20.120.13" 
+firstLine="SIP/2.0 100 Trying" 
+>
+<![CDATA[SIP/2.0 100 Trying
+From: <sip:MsmlTool@10.20.120.13>;tag=1684c46
+To: <sip:msml@146.152.64.141>
+Call-ID: b681a3b052bad932b00045c121778201@10.20.120.13
+CSeq: 1 INVITE
+Via: SIP/2.0/UDP 10.20.120.13:5070;branch=z9hG4bKf9e60a43cf02f093e4adf56b9879cdb8
+Contact: <sip:msml@146.152.64.141>
+Allow: INVITE,CANCEL,ACK,BYE,OPTIONS,INFO,REFER,NOTIFY,UPDATE
+Content-Length: 0
+
+]]>
+</message>
+
+<message
+from="146.152.64.141:5060" 
+to="10.20.120.13:5070" 
+time="1448981868289"
+isSender="false" 
+transactionId="z9hg4bkf9e60a43cf02f093e4adf56b9879cdb8" 
+callId="b681a3b052bad932b00045c121778201@10.20.120.13" 
+firstLine="SIP/2.0 180 Ringing" 
+>
+<![CDATA[SIP/2.0 180 Ringing
+From: <sip:MsmlTool@10.20.120.13>;tag=1684c46
+To: <sip:msml@146.152.64.141>;tag=ecac3250-8d409892-13c4-50022-10562-5550c84a-10562
+Call-ID: b681a3b052bad932b00045c121778201@10.20.120.13
+CSeq: 1 INVITE
+Via: SIP/2.0/UDP 10.20.120.13:5070;branch=z9hG4bKf9e60a43cf02f093e4adf56b9879cdb8
+Contact: <sip:msml@146.152.64.141>
+Allow: INVITE,CANCEL,ACK,BYE,OPTIONS,INFO,REFER,NOTIFY,UPDATE
+Content-Length: 0
+
+]]>
+</message>
+
+<message
+from="146.152.64.141:5060" 
+to="10.20.120.13:5070" 
+time="1448981868320"
+isSender="false" 
+transactionId="z9hg4bkf9e60a43cf02f093e4adf56b9879cdb8" 
+callId="b681a3b052bad932b00045c121778201@10.20.120.13" 
+firstLine="SIP/2.0 200 OK" 
+>
+<![CDATA[SIP/2.0 200 OK
+From: <sip:MsmlTool@10.20.120.13>;tag=1684c46
+To: <sip:msml@146.152.64.141>;tag=ecac3250-8d409892-13c4-50022-10562-5550c84a-10562
+Call-ID: b681a3b052bad932b00045c121778201@10.20.120.13
+CSeq: 1 INVITE
+Via: SIP/2.0/UDP 10.20.120.13:5070;branch=z9hG4bKf9e60a43cf02f093e4adf56b9879cdb8
+Contact: <sip:msml@146.152.64.141>
+Session-Expires: 1800;refresher=uas
+Allow: INVITE,CANCEL,ACK,BYE,OPTIONS,INFO,REFER,NOTIFY,UPDATE
+Content-Type: application/sdp
+Content-Length: 238
+
+]]>
+</message>
+
+<message
+from="10.20.120.13:5070" 
+to="146.152.64.141:5060" 
+time="1448981868336"
+isSender="true" 
+transactionId="z9hg4bk26539f9ff63a485f194f1790d6a4f7cc" 
+callId="b681a3b052bad932b00045c121778201@10.20.120.13" 
+firstLine="ACK sip:msml@146.152.64.141 SIP/2.0" 
+>
+<![CDATA[ACK sip:msml@146.152.64.141 SIP/2.0
+Call-ID: b681a3b052bad932b00045c121778201@10.20.120.13
+CSeq: 1 ACK
+Via: SIP/2.0/UDP 10.20.120.13:5070;branch=z9hG4bK26539f9ff63a485f194f1790d6a4f7cc
+From: <sip:MsmlTool@10.20.120.13>;tag=1684c46
+To: <sip:msml@146.152.64.141>;tag=ecac3250-8d409892-13c4-50022-10562-5550c84a-10562
+Max-Forwards: 70
+Content-Length: 0
+
+]]>
+</message>
+
+<message
+from="10.20.120.13:5070" 
+to="146.152.64.141:5060" 
+time="1448982123605"
+isSender="true" 
+transactionId="z9hg4bk2b9448c92266331db62c23004960d547" 
+callId="b681a3b052bad932b00045c121778201@10.20.120.13" 
+firstLine="BYE sip:msml@146.152.64.141 SIP/2.0" 
+>
+<![CDATA[BYE sip:msml@146.152.64.141 SIP/2.0
+Via: SIP/2.0/UDP 10.20.120.13:5070;branch=z9hG4bK2b9448c92266331db62c23004960d547
+CSeq: 2 BYE
+From: <sip:MsmlTool@10.20.120.13>;tag=1684c46
+To: <sip:msml@146.152.64.141>;tag=ecac3250-8d409892-13c4-50022-10562-5550c84a-10562
+Call-ID: b681a3b052bad932b00045c121778201@10.20.120.13
+Session-Expires: 1800;refresher=uas
+Allow: INVITE,CANCEL,ACK,BYE,OPTIONS,INFO,REFER,NOTIFY,UPDATE
+Max-Forwards: 70
+Content-Length: 0
+
+]]>
+</message>
+
+<message
+from="146.152.64.141:5060" 
+to="10.20.120.13:5070" 
+time="1448982123605"
+isSender="false" 
+transactionId="z9hg4bk2b9448c92266331db62c23004960d547" 
+callId="b681a3b052bad932b00045c121778201@10.20.120.13" 
+firstLine="SIP/2.0 200 OK" 
+>
+<![CDATA[SIP/2.0 200 OK
+From: <sip:MsmlTool@10.20.120.13>;tag=1684c46
+To: <sip:msml@146.152.64.141>;tag=ecac3250-8d409892-13c4-50022-10562-5550c84a-10562
+Call-ID: b681a3b052bad932b00045c121778201@10.20.120.13
+CSeq: 2 BYE
+Via: SIP/2.0/UDP 10.20.120.13:5070;branch=z9hG4bK2b9448c92266331db62c23004960d547
+Allow: INVITE,CANCEL,ACK,BYE,OPTIONS,INFO,REFER,NOTIFY,UPDATE
+Content-Length: 0
+
+]]>
+</message>
+

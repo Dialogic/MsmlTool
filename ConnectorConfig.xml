@@ -1,3 +1,5 @@
-<connectorconfig>
+<xmsconfig>
 <port>5070</port>
-</connectorconfig>
+<appid>msml</appid>
+<baseurl>10.20.123.201:5070</baseurl>
+</xmsconfig>

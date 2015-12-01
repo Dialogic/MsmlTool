@@ -27,29 +27,26 @@
           <Group type="102" attributes="0">
               <EmptySpace min="-2" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="1" attributes="0">
-                  <Component id="jTabbedPane1" max="32767" attributes="0"/>
+                  <Component id="jTabbedPane1" pref="0" max="32767" attributes="0"/>
                   <Group type="102" alignment="0" attributes="0">
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="userText" max="32767" attributes="0"/>
-                          <Component id="userLabel" max="32767" attributes="0"/>
+                          <Component id="userText" min="-2" pref="166" max="-2" attributes="0"/>
+                          <Component id="userLabel" min="-2" pref="34" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" attributes="0">
-                              <Component id="addressText" max="32767" attributes="0"/>
-                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                              <Component id="callButton" min="-2" pref="66" max="-2" attributes="0"/>
-                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                              <Component id="hangupButton" min="-2" pref="83" max="-2" attributes="0"/>
+                              <Component id="addressText" min="-2" pref="194" max="-2" attributes="0"/>
+                              <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
+                              <Component id="callButton" min="-2" pref="72" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="hangupButton" min="-2" pref="96" max="-2" attributes="0"/>
                           </Group>
-                          <Group type="102" attributes="0">
-                              <Component id="addressLabel" max="32767" attributes="0"/>
-                              <EmptySpace min="42" pref="42" max="-2" attributes="0"/>
-                          </Group>
+                          <Component id="addressLabel" min="-2" pref="73" max="-2" attributes="0"/>
                       </Group>
                   </Group>
               </Group>
-              <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
+              <EmptySpace min="-2" max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -58,19 +55,17 @@
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="userLabel" alignment="3" max="32767" attributes="0"/>
-                  <Component id="addressLabel" alignment="3" max="32767" attributes="0"/>
+                  <Component id="userLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="addressLabel" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace min="3" pref="3" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="0" attributes="0">
+              <Group type="103" groupAlignment="0" max="-2" attributes="0">
                   <Component id="userText" alignment="0" min="-2" pref="26" max="-2" attributes="0"/>
-                  <Group type="103" alignment="0" groupAlignment="3" attributes="0">
-                      <Component id="hangupButton" alignment="3" max="32767" attributes="0"/>
-                      <Component id="callButton" alignment="3" max="32767" attributes="0"/>
-                      <Component id="addressText" alignment="3" min="-2" pref="23" max="-2" attributes="0"/>
-                  </Group>
+                  <Component id="addressText" alignment="0" min="-2" pref="26" max="-2" attributes="0"/>
+                  <Component id="callButton" alignment="0" pref="28" max="32767" attributes="0"/>
+                  <Component id="hangupButton" alignment="0" max="32767" attributes="0"/>
               </Group>
-              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="13" max="-2" attributes="0"/>
               <Component id="jTabbedPane1" max="32767" attributes="0"/>
               <EmptySpace min="-2" max="-2" attributes="0"/>
           </Group>
@@ -85,11 +80,20 @@
     </Component>
     <Component class="javax.swing.JLabel" name="addressLabel">
       <Properties>
+        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+          <Font name="Tahoma" size="11" style="1"/>
+        </Property>
+        <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+          <Color blue="99" green="0" red="0" type="rgb"/>
+        </Property>
         <Property name="text" type="java.lang.String" value="IP Address"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JButton" name="callButton">
       <Properties>
+        <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+          <Image iconType="3" name="/com/dialogic/msmltool/images/call.png"/>
+        </Property>
         <Property name="text" type="java.lang.String" value="Call"/>
       </Properties>
       <Events>
@@ -97,14 +101,17 @@
       </Events>
     </Component>
     <Container class="javax.swing.JTabbedPane" name="jTabbedPane1">
+      <AccessibilityProperties>
+        <Property name="AccessibleContext.accessibleName" type="java.lang.String" value="Call Flow"/>
+      </AccessibilityProperties>
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout"/>
       <SubComponents>
         <Container class="javax.swing.JPanel" name="callPanel">
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-              <JTabbedPaneConstraints tabName="Call">
-                <Property name="tabTitle" type="java.lang.String" value="Call"/>
+              <JTabbedPaneConstraints tabName="Call Flow">
+                <Property name="tabTitle" type="java.lang.String" value="Call Flow"/>
               </JTabbedPaneConstraints>
             </Constraint>
           </Constraints>
@@ -114,7 +121,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jScrollPane3" pref="474" max="32767" attributes="0"/>
+                      <Component id="jScrollPane3" pref="529" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -123,7 +130,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jScrollPane3" pref="389" max="32767" attributes="0"/>
+                      <Component id="jScrollPane3" pref="385" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -168,15 +175,15 @@
                                       <EmptySpace type="separate" max="-2" attributes="0"/>
                                       <Component id="saveMsmlScriptButton" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace type="separate" max="-2" attributes="0"/>
-                                      <Component id="sendMsmlButton" min="-2" pref="65" max="-2" attributes="0"/>
-                                      <EmptySpace min="0" pref="142" max="32767" attributes="0"/>
+                                      <Component id="sendMsmlButton" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace min="0" pref="149" max="32767" attributes="0"/>
                                   </Group>
                                   <Component id="fileTextField" max="32767" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="fileButton" min="-2" pref="121" max="-2" attributes="0"/>
                                   <Component id="msmlComboBox" min="-2" pref="121" max="-2" attributes="0"/>
-                                  <Component id="fileButton" min="-2" pref="101" max="-2" attributes="0"/>
                               </Group>
                           </Group>
                           <Component id="jScrollPane1" alignment="0" max="32767" attributes="0"/>
@@ -190,10 +197,7 @@
                                   </Group>
                                   <Group type="102" attributes="0">
                                       <EmptySpace max="-2" attributes="0"/>
-                                      <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="msmlScriptLabel" min="-2" pref="75" max="-2" attributes="0"/>
-                                          <Component id="responseLabel" alignment="0" min="-2" pref="132" max="-2" attributes="0"/>
-                                      </Group>
+                                      <Component id="responseLabel" min="-2" pref="132" max="-2" attributes="0"/>
                                   </Group>
                               </Group>
                               <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
@@ -201,13 +205,19 @@
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="msmlScriptLabel" min="-2" pref="75" max="-2" attributes="0"/>
+                      <EmptySpace max="32767" attributes="0"/>
+                  </Group>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace min="-2" pref="3" max="-2" attributes="0"/>
                       <Component id="msmlScriptLabel" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                       <Component id="jScrollPane1" pref="127" max="32767" attributes="0"/>
                       <EmptySpace min="-2" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
@@ -224,10 +234,10 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="responseLabel" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="-2" pref="2" max="-2" attributes="0"/>
-                      <Component id="jScrollPane2" pref="136" max="32767" attributes="0"/>
+                      <Component id="jScrollPane2" pref="132" max="32767" attributes="0"/>
                       <EmptySpace min="-2" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="clearResponseButton" alignment="3" min="-2" pref="26" max="-2" attributes="0"/>
+                          <Component id="clearResponseButton" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="saveResponseButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace min="-2" max="-2" attributes="0"/>
@@ -238,6 +248,12 @@
           <SubComponents>
             <Component class="javax.swing.JLabel" name="msmlScriptLabel">
               <Properties>
+                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                  <Font name="Tahoma" size="11" style="1"/>
+                </Property>
+                <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                  <Color blue="99" green="0" red="0" type="rgb"/>
+                </Property>
                 <Property name="text" type="java.lang.String" value="MSML Script"/>
               </Properties>
             </Component>
@@ -258,6 +274,12 @@
             </Container>
             <Component class="javax.swing.JLabel" name="responseLabel">
               <Properties>
+                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                  <Font name="Tahoma" size="11" style="1"/>
+                </Property>
+                <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                  <Color blue="99" green="0" red="0" type="rgb"/>
+                </Property>
                 <Property name="text" type="java.lang.String" value="Received Response"/>
               </Properties>
             </Component>
@@ -278,6 +300,9 @@
             </Container>
             <Component class="javax.swing.JButton" name="fileButton">
               <Properties>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/com/dialogic/msmltool/images/choose.png"/>
+                </Property>
                 <Property name="text" type="java.lang.String" value="ChooseFile"/>
               </Properties>
               <Events>
@@ -286,6 +311,9 @@
             </Component>
             <Component class="javax.swing.JButton" name="sendMsmlButton">
               <Properties>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/com/dialogic/msmltool/images/send.png"/>
+                </Property>
                 <Property name="text" type="java.lang.String" value="Send"/>
               </Properties>
               <Events>
@@ -293,12 +321,12 @@
               </Events>
             </Component>
             <Component class="javax.swing.JTextField" name="fileTextField">
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fileTextFieldActionPerformed"/>
-              </Events>
             </Component>
             <Component class="javax.swing.JButton" name="clearButton">
               <Properties>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/com/dialogic/msmltool/images/clear.png"/>
+                </Property>
                 <Property name="text" type="java.lang.String" value="Clear"/>
               </Properties>
               <Events>
@@ -307,6 +335,9 @@
             </Component>
             <Component class="javax.swing.JButton" name="clearResponseButton">
               <Properties>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/com/dialogic/msmltool/images/clear.png"/>
+                </Property>
                 <Property name="text" type="java.lang.String" value="Clear"/>
               </Properties>
               <Events>
@@ -315,6 +346,9 @@
             </Component>
             <Component class="javax.swing.JButton" name="saveMsmlScriptButton">
               <Properties>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/com/dialogic/msmltool/images/save.png"/>
+                </Property>
                 <Property name="text" type="java.lang.String" value="Save"/>
               </Properties>
               <Events>
@@ -323,6 +357,9 @@
             </Component>
             <Component class="javax.swing.JButton" name="saveResponseButton">
               <Properties>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/com/dialogic/msmltool/images/save.png"/>
+                </Property>
                 <Property name="text" type="java.lang.String" value="Save"/>
               </Properties>
               <Events>
@@ -332,12 +369,15 @@
             <Component class="javax.swing.JComboBox" name="msmlComboBox">
               <Properties>
                 <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-                  <StringArray count="5">
+                  <StringArray count="8">
                     <StringItem index="0" value="None Selected"/>
                     <StringItem index="1" value="Play"/>
                     <StringItem index="2" value="Record"/>
-                    <StringItem index="3" value="CreateConf"/>
-                    <StringItem index="4" value="DeleteConf"/>
+                    <StringItem index="3" value="CreateAudioConf"/>
+                    <StringItem index="4" value="CreateVideoConf"/>
+                    <StringItem index="5" value="JoinVideoConf"/>
+                    <StringItem index="6" value="DeleteConf"/>
+                    <StringItem index="7" value="SimpleIVR"/>
                   </StringArray>
                 </Property>
               </Properties>
@@ -356,11 +396,20 @@
     </Component>
     <Component class="javax.swing.JLabel" name="userLabel">
       <Properties>
+        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+          <Font name="Tahoma" size="11" style="1"/>
+        </Property>
+        <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+          <Color blue="99" green="0" red="0" type="rgb"/>
+        </Property>
         <Property name="text" type="java.lang.String" value="User"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JButton" name="hangupButton">
       <Properties>
+        <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+          <Image iconType="3" name="/com/dialogic/msmltool/images/hangup.png"/>
+        </Property>
         <Property name="text" type="java.lang.String" value="Hangup"/>
       </Properties>
       <Events>
