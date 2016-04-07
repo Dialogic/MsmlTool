@@ -238,7 +238,7 @@ public class CallUIForm extends javax.swing.JFrame {
             }
         });
 
-        msmlComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "None Selected", "Play", "Record", "CreateAudioConf", "CreateVideoConf", "JoinVideoConf", "DeleteConf", "SimpleIVR" }));
+        msmlComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "None Selected", "Play", "Record", "CreateAudioConf", "CreateVideoConf", "JoinVideoConf", "UnjoinVideoStream", "UnjoinConf", "DeleteConf", "SimpleIVR" }));
         msmlComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 msmlComboBoxActionPerformed(evt);
@@ -616,6 +616,22 @@ public class CallUIForm extends javax.swing.JFrame {
                         + "    </join>\n"
                         + "</msml>";
                 msmlTextArea.setText(joinConf);
+                break;
+            case "UnjoinVideoStream":
+                String unjoinVideo = "<?xml version=\"1.0\" encoding=\"US-ASCII\"?>\n"
+                        + "<msml version=\"1.1\">\n"
+                        + "<unjoin id1=\"conn:1234\" id2=\"conf:XMSConference_1\">\n"
+                        + "<stream media=\"video\" dir=\"from-id1\"/>\n"
+                        + "</unjoin>\n"
+                        + "</msml>";
+                msmlTextArea.setText(unjoinVideo);
+                break;
+            case "UnjoinConf":
+                String unjoinConf = "<?xml version=\"1.0\" encoding=\"US-ASCII\"?>\n"
+                        + "<msml version=\"1.1\">\n"
+                        + "<unjoin id1=\"conn:1234\" id2=\"conf:XMSConference_1\"/>\n"
+                        + "</msml>";
+                msmlTextArea.setText(unjoinConf);
                 break;
             case "SimpleIVR":
                 String collect = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"

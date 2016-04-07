@@ -369,15 +369,17 @@
             <Component class="javax.swing.JComboBox" name="msmlComboBox">
               <Properties>
                 <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-                  <StringArray count="8">
+                  <StringArray count="10">
                     <StringItem index="0" value="None Selected"/>
                     <StringItem index="1" value="Play"/>
                     <StringItem index="2" value="Record"/>
                     <StringItem index="3" value="CreateAudioConf"/>
                     <StringItem index="4" value="CreateVideoConf"/>
                     <StringItem index="5" value="JoinVideoConf"/>
-                    <StringItem index="6" value="DeleteConf"/>
-                    <StringItem index="7" value="SimpleIVR"/>
+                    <StringItem index="6" value="UnjoinVideoStream"/>
+                    <StringItem index="7" value="UnjoinConf"/>
+                    <StringItem index="8" value="DeleteConf"/>
+                    <StringItem index="9" value="SimpleIVR"/>
                   </StringArray>
                 </Property>
               </Properties>
