@@ -16,10 +16,13 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.Inet4Address;
+import java.net.URL;
 import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.sip.address.Address;
@@ -33,6 +36,8 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.text.DefaultCaret;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -55,6 +60,8 @@ public class CallUIForm extends javax.swing.JFrame {
 
     static final Logger logger = Logger.getLogger(CallUIForm.class.getName());
     MsmlApp app;
+    static private Map<String, String> rtpdumpMap = new LinkedHashMap<>();
+    private String port = "";
 
     /**
      * Creates new form CallForm
@@ -111,6 +118,10 @@ public class CallUIForm extends javax.swing.JFrame {
         callPanel = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
         callTextArea = new javax.swing.JTextArea();
+        rtpPlay = new javax.swing.JButton();
+        jScrollPane5 = new javax.swing.JScrollPane();
+        rtpdumpTable = new javax.swing.JTable();
+        uploadFile = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         msmlScriptLabel = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -133,12 +144,6 @@ public class CallUIForm extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("CallUserInterface");
 
-        addressText.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                addressTextActionPerformed(evt);
-            }
-        });
-
         addressLabel.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         addressLabel.setForeground(new java.awt.Color(0, 0, 153));
         addressLabel.setText("IP Address");
@@ -155,21 +160,73 @@ public class CallUIForm extends javax.swing.JFrame {
         callTextArea.setRows(5);
         jScrollPane3.setViewportView(callTextArea);
 
+        rtpPlay.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/dialogic/msmltool/images/play.png"))); // NOI18N
+        rtpPlay.setText(" Rtp Play");
+        rtpPlay.setActionCommand("RtpPlay");
+        rtpPlay.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rtpPlayActionPerformed(evt);
+            }
+        });
+
+        rtpdumpTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Rtpdump File Table"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane5.setViewportView(rtpdumpTable);
+
+        uploadFile.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/dialogic/msmltool/images/uploadfile.png"))); // NOI18N
+        uploadFile.setText("Upload File");
+        uploadFile.setActionCommand("RtpPlay");
+        uploadFile.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                uploadFileActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout callPanelLayout = new javax.swing.GroupLayout(callPanel);
         callPanel.setLayout(callPanelLayout);
         callPanelLayout.setHorizontalGroup(
             callPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(callPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 529, Short.MAX_VALUE)
+                .addGroup(callPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 529, Short.MAX_VALUE)
+                    .addGroup(callPanelLayout.createSequentialGroup()
+                        .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(callPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(uploadFile, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(rtpPlay, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         callPanelLayout.setVerticalGroup(
             callPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(callPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 385, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 294, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(callPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(callPanelLayout.createSequentialGroup()
+                        .addGap(35, 35, 35)
+                        .addComponent(uploadFile)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(rtpPlay))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, callPanelLayout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Call Flow", callPanel);
@@ -289,7 +346,7 @@ public class CallUIForm extends javax.swing.JFrame {
                 .addGap(3, 3, 3)
                 .addComponent(msmlScriptLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 127, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 144, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(clearButton)
@@ -303,7 +360,7 @@ public class CallUIForm extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(responseLabel)
                 .addGap(2, 2, 2)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 132, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 148, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(clearResponseButton)
@@ -367,8 +424,8 @@ public class CallUIForm extends javax.swing.JFrame {
                     .addComponent(addressText, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(callButton, javax.swing.GroupLayout.DEFAULT_SIZE, 28, Short.MAX_VALUE)
                     .addComponent(hangupButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(13, 13, 13)
-                .addComponent(jTabbedPane1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 468, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -376,11 +433,6 @@ public class CallUIForm extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    //capturing the address for the call
-    private void addressTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addressTextActionPerformed
-
-    }//GEN-LAST:event_addressTextActionPerformed
 
     private void callButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_callButtonActionPerformed
         try {
@@ -705,6 +757,82 @@ public class CallUIForm extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_saveResponseButtonActionPerformed
 
+    private void uploadFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_uploadFileActionPerformed
+        try {
+            JFileChooser chooser = new JFileChooser("");
+            chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+
+            int returnVal = chooser.showOpenDialog((java.awt.Component) null);
+            File inFile = null;
+            if (returnVal == chooser.APPROVE_OPTION) {
+                // to populate the text field
+                chooser.addPropertyChangeListener(JFileChooser.SELECTED_FILE_CHANGED_PROPERTY, new PropertyChangeListener() {
+                    public void propertyChange(PropertyChangeEvent evt) {
+                        if (JFileChooser.SELECTED_FILE_CHANGED_PROPERTY.equals(evt.getPropertyName())) {
+                            JFileChooser chooser = (JFileChooser) evt.getSource();
+                            if (chooser.getSelectedFile() != null) {
+                                fileTextField.setText(chooser.getSelectedFile().getName());
+                            }
+                        }
+                    }
+                });
+                inFile = chooser.getSelectedFile();
+                System.out.println("Selected File: " + inFile.getAbsolutePath());
+
+                DefaultTableModel model = (DefaultTableModel) this.rtpdumpTable.getModel();
+                rtpdumpTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+
+                model.addRow(new Object[]{chooser.getSelectedFile().getName()});
+                rtpdumpMap.put(chooser.getSelectedFile().getName(), inFile.getAbsolutePath());
+
+            } else if (returnVal == chooser.CANCEL_OPTION) {
+                System.out.println("No file selected");
+            }
+        } catch (Exception ex) {
+            logger.log(Level.SEVERE, ex.getMessage(), ex);
+        }
+    }//GEN-LAST:event_uploadFileActionPerformed
+
+    private void rtpPlayActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rtpPlayActionPerformed
+        try {
+            if (this.callTextArea.getText().contains("ACK")) {
+                if (this.rtpdumpTable.getRowCount() <= 0) {
+                    JOptionPane.showMessageDialog(new JFrame(), "Please upload a file to be played", "Dialog",
+                            JOptionPane.ERROR_MESSAGE);
+                    return;
+                } else {
+                    int selectedrow = this.rtpdumpTable.getSelectedRow();
+                    if (selectedrow == -1) {
+                        JOptionPane.showMessageDialog(new JFrame(), "Please select a file from the table", "Dialog",
+                                JOptionPane.INFORMATION_MESSAGE);
+                        return;
+                    } else {
+                        System.out.println("XMS Video port:" + this.getPort());
+                        URL url = getClass().getResource("/rtptools_1_18_win_bin/rtpplay.exe");
+                        System.out.println(url);
+                        File file = new File(url.getPath());
+
+                        int selectedColumnIndex = this.rtpdumpTable.getSelectedColumn();
+                        String selectedObject = (String) this.rtpdumpTable.getModel().getValueAt(selectedrow, selectedColumnIndex);
+
+                        String cmd = file + " -T -f " + rtpdumpMap.get(selectedObject) + " " + this.addressText.getText() + "/" + this.getPort();
+                        System.out.println(cmd);
+
+                        //String cmd = "C:\\Users\\ssatyana\\Documents\\NetBeansProjects\\Rtpplay\\src\\rtptools_1_18_win_bin\\rtpplay.exe -T -f C:\\Users\\ssatyana\\Documents\\NetBeansProjects\\Rtpplay\\src\\rtptools_1_18_win_bin\\first-rtpdump 146.152.64.141/57348";
+                        Process p = Runtime.getRuntime().exec(cmd);
+                        //p.waitFor();
+                    }
+                }
+            } else {
+                JOptionPane.showMessageDialog(new JFrame(), "Call not connected", "Dialog",
+                        JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(CallUIForm.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_rtpPlayActionPerformed
+
     /**
      * Updates the call text area with info requests sent and responses
      * received.
@@ -923,16 +1051,34 @@ public class CallUIForm extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JComboBox msmlComboBox;
     private javax.swing.JLabel msmlScriptLabel;
     private javax.swing.JTextArea msmlTextArea;
     private javax.swing.JLabel responseLabel;
     private javax.swing.JTextArea responseTextArea;
+    private javax.swing.JButton rtpPlay;
+    private javax.swing.JTable rtpdumpTable;
     private javax.swing.JButton saveMsmlScriptButton;
     private javax.swing.JButton saveResponseButton;
     private javax.swing.JButton sendMsmlButton;
+    private javax.swing.JButton uploadFile;
     private javax.swing.JLabel userLabel;
     private javax.swing.JTextField userText;
     // End of variables declaration//GEN-END:variables
+
+    /**
+     * @return the port
+     */
+    public String getPort() {
+        return this.port;
+    }
+
+    /**
+     * @param port the port to set
+     */
+    public void setPort(String port) {
+        this.port = port;
+    }
 }

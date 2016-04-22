@@ -19,6 +19,8 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.sip.address.Address;
 import javax.sip.header.FromHeader;
 import javax.sip.header.ToHeader;
@@ -29,9 +31,9 @@ import javax.sip.message.Request;
  * @author ssatyana
  */
 public class MsmlApp implements Observer {
-    
+
     static final Logger logger = Logger.getLogger(MsmlApp.class.getName());
-    
+
     static String toUser;
     static String toAdr;
     static Call callObject;
@@ -74,7 +76,7 @@ public class MsmlApp implements Observer {
             XMSSipCall waitCall = new XMSSipCall(connector);
             waitCall.addObserver(this);
             waitCall.addToWaitList();
-            
+
         } catch (UnknownHostException ex) {
             Logger.getLogger(MsmlApp.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -124,88 +126,6 @@ public class MsmlApp implements Observer {
     }
 
     /**
-     * Logic to handle responses.
-     *
-     * @param response
-     * @param cSeq
-     * @param inboundCall
-     */
-//    public static void sipCallResponse(Response response, CSeqHeader cSeq, XMSSipCall inboundCall) {
-//        switch (response.getStatusCode()) {
-//            case Response.OK:
-//                switch (cSeq.getMethod()) {
-//                    case Request.INVITE:
-//                        if (buttonsActive) {
-//                            callForm.updateCallTextArea(response);
-//                            call.createAckRequest(response);
-//                        } else {
-//                            callForm.updateCallTextAreaBridgeXMS(response, null);
-//                            call.createAckRequest(response);
-//                            inboundCall.setLocalSdp(new String(response.getRawContent()));
-//                            inboundCall.createInviteOk(inboundCall.getInviteRequest());
-//                        }
-//                        break;
-//                    case Request.INFO:
-//                        break;
-//                    case Request.BYE:
-//                        if (buttonsActive) {
-//                            callForm.updateCallTextArea(response);
-//                        } else {
-//                            callForm.setVisible(false);
-//                            System.exit(0);
-//                        }
-//                        break;
-//                }
-//                break;
-//            case Response.TRYING:
-//                if (buttonsActive) {
-//                    callForm.updateCallTextArea(response);
-//                } else {
-//                    callForm.updateCallTextAreaBridgeXMS(response, null);
-//                    inboundCall.createTryingResponse(inboundCall.getInviteRequest());
-//                }
-//                break;
-//            case Response.RINGING:
-//                if (buttonsActive) {
-//                    callForm.updateCallTextArea(response);
-//                } else {
-//                    callForm.updateCallTextAreaBridgeXMS(response, null);
-//                    inboundCall.createRingingResponse(inboundCall.getInviteRequest());
-//                }
-//                break;
-//        }
-//    }
-    /**
-     * Logic to handle requests. Ex: ACK, BYE, etc.
-     *
-     * @param request
-     * @param c
-     */
-//    public static void recievedRequest(Request request, XMSSipCall c) {
-//        switch (request.getMethod()) {
-//            case Request.ACK:
-//                callForm.updateCallTextAreaBridgeMode(request, null);
-//                break;
-//            case Request.BYE:
-//                if (buttonsActive) {
-//                    // direct mode
-//                    callForm.updateCallTextArea();
-//                    xmsBye = true;
-//                    call.doByeOk(request);
-//                } else if (c == call) {
-//                    // bye request sent by the XMS, bridge mode
-//                    xmsBye = true;
-//                    call.doByeOk(request);
-//                    getInboundCall().createBye();
-//                } else {
-//                    // bye request sent by the softphone, bridge mode
-//                    c.doByeOk(request);
-//                    call.createBye();
-//                }
-//                break;
-//        }
-//    }
-    /**
      * Send an INFO request based on the information send by the user via the
      * UI.
      *
@@ -218,55 +138,6 @@ public class MsmlApp implements Observer {
         }
     }
 
-    /**
-     * Displays the INFO responses to the user.
-     *
-     * @param msml
-     */
-//    public static void diaplayInfoResponse(String msml) {
-//        callForm.updateRecievedMessage(msml);
-//    }
-    /**
-     * Send an INFO OK response for the INFO request received from XMS. Also
-     * displays this INFO request to the user
-     *
-     * @param request
-     */
-//    public static void infoRequest(Request request) {
-//        call.createInfoResponse(request);
-//        callForm.updateRecievedMessage(new String(request.getRawContent()));
-//    }
-    /**
-     * Send a response for the OPTIONS request.
-     *
-     * @param request
-     * @param c. The incoming call object
-     */
-//    public static void optionsRequest(Request request, XMSSipCall c) {
-//        callForm.updateCallTextAreaBridgeMode(request, null);
-//        c.createOptionsResponse(request);
-//    }
-    /**
-     * Send a response for the CANCEL request .
-     *
-     * @param request
-     * @param c. The incoming call object
-     */
-//    public static void cancelRequest(Request request, XMSSipCall c) {
-//        c.createCancelResponse(request);
-//        if (call != null) {
-//            call.createCancelRequest();
-//        }
-//    }
-    /**
-     * Send ACK for request terminated.
-     *
-     * @param response
-     * @param c. The incoming call object
-     */
-//    public static void requestTerminated(Response response, Call c) {
-//        call.createRequestTerminated(response);
-//    }
     /**
      * Send BYE request when the user clicks on the hangup button.
      */
@@ -299,20 +170,6 @@ public class MsmlApp implements Observer {
     }
 
     /**
-     *
-     * @param adr.
-     */
-//    public static void setXMSAdr(String adr) {
-//        toAdr = adr;
-//    }
-    /**
-     *
-     * @return the XMS IP address.
-     */
-//    public static String getXMSAdr() {
-//        return toAdr;
-//    }
-    /**
      * Used to create BYE when close button is clicked.
      *
      * @param c
@@ -339,56 +196,32 @@ public class MsmlApp implements Observer {
         String contentString = null;
         try {
             String localAdr = Inet4Address.getLocalHost().getHostAddress();
-            contentString = "v=0\r\n"
+//            contentString = "v=0\r\n"
+//                    + "o=MsmlTool 575 654 IN IP4 " + localAdr + "\r\n"
+//                    + "s=Talk\r\n"
+//                    + "c=IN IP4 " + localAdr + "\r\n"
+//                    + "t=0 0\r\n"
+//                    + "m=audio 7070 RTP/AVP 0 8 18 101\r\n"
+//                    + "a=rtpmap:0 PCMU/8000\r\n"
+//                    + "a=rtpmap:101 telephone-event/8000\r\n"
+//                    + "a=fmtp:101 0-11\r\n"
+//                    + "a=sendrecv\r\n\r\n";
+            // example sdp with video
+            contentString = "v=0\n"
                     + "o=MsmlTool 575 654 IN IP4 " + localAdr + "\r\n"
                     + "s=Talk\r\n"
                     + "c=IN IP4 " + localAdr + "\r\n"
                     + "t=0 0\r\n"
-                    + "m=audio 7070 RTP/AVP 0 8 18 101\r\n"
-                    + "a=rtpmap:0 PCMU/8000\r\n"
-                    + "a=rtpmap:101 telephone-event/8000\r\n"
-                    + "a=fmtp:101 0-11\r\n"
-                    + "a=sendrecv\r\n\r\n";
-//            contentString = "v=0\n"
-//                    + "o=- 4 2 IN IP4 10.32.10.213\n"
-//                    + "s=CounterPath eyeBeam 1.5\n"
-//                    + "c=IN IP4 10.32.10.213\n"
-//                    + "t=0 0\n"
-//                    + "m=audio 5062 RTP/AVP 107 100 106 6 0 105 18 3 5 101\n"
-//                    + "a=fmtp:18 annexb=no\n"
-//                    + "a=fmtp:101 0-15\n"
-//                    + "a=rtpmap:107 BV32/16000\n"
-//                    + "a=rtpmap:100 SPEEX/16000\n"
-//                    + "a=rtpmap:106 SPEEX-FEC/16000\n"
-//                    + "a=rtpmap:105 SPEEX-FEC/8000\n"
-//                    + "a=rtpmap:101 telephone-event/8000\n"
-//                    + "a=sendrecv\n"
-//                    + "a=x-rtp-session-id:78FAFEFDE817400AAFD91313ECD9D8B2\r\n\r\n";
+                    + "m=audio 7070 RTP/AVP 0 101\n"
+                    + "a=rtpmap:101 telephone-event/8000\n"
+                    + "m=video 7080 RTP/AVP 96\n"
+                    + "a=rtpmap:96 VP8/90000";
         } catch (UnknownHostException ex) {
             Logger.getLogger(MsmlApp.class.getName()).log(Level.SEVERE, null, ex);
         }
         return contentString;
     }
 
-    /**
-     * This method is used to let the user know about the call flow via the UI.
-     * Displays the responses sent to an incoming invite request. Ex: 200OK,
-     * 100, 180, etc.
-     *
-     * @param res
-     */
-//    public static void updateCallTextBridgeSentResponse(Response res) {
-//        callForm.updateCallTextAreaBridgeMode(null, res);
-//    }
-    /**
-     * This method is used to let the user know about the call flow via the UI.
-     * Displays the requests sent to the XMS, ex: INVITE, ACK, etc.
-     *
-     * @param req
-     */
-//    public static void updateCallTextBridgeRequestToXMS(Request req) {
-//        callForm.updateCallTextAreaBridgeXMS(null, req);
-//    }
     /**
      * This is the Notify handler that will be called by EventThread when new
      * events are created.
@@ -455,13 +288,22 @@ public class MsmlApp implements Observer {
                     Address toAddress = to.getAddress();
                     FromHeader from = (FromHeader) getInboundCall().getInviteRequest().getHeader("From");
                     Address fromAddress = from.getAddress();
-                    
+
                     callForm.updateCallTextAreaWithCustomMessage(toAddress.toString(), fromAddress.toString(), "200OK");
+                }
+                String sdp = new String(e.getRes().getRawContent());
+                if (sdp.contains("xmserver")) {
+                    Pattern pattern = Pattern.compile("m=video (.*?) RTP");
+                    Matcher m = pattern.matcher(sdp);
+                    if (m.find()) {
+                        callForm.setPort(m.group(1));
+                    }
+
                 }
             }
         } else if (e.getType().equals(MsmlEventType.CONNECTED)) {
             if (e.getReq() != null) {
-                callForm.updateCallTextAreaBridgeMode(e.getReq(), null);                
+                callForm.updateCallTextAreaBridgeMode(e.getReq(), null);
             }
         } else if (e.getType().equals(MsmlEventType.INFORESPONSE)) {
             if (e.getRes() != null) {
