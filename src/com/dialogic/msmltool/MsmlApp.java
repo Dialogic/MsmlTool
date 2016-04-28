@@ -298,7 +298,11 @@ public class MsmlApp implements Observer {
                     if (m.find()) {
                         callForm.setPort(m.group(1));
                     }
-
+                    Pattern ipAdr = Pattern.compile("o=xmserver .* (.*)");
+                    Matcher mIP = ipAdr.matcher(sdp);
+                    if (mIP.find()) {
+                        callForm.setIpAdr(mIP.group(1));
+                    }
                 }
             }
         } else if (e.getType().equals(MsmlEventType.CONNECTED)) {

@@ -62,6 +62,7 @@ public class CallUIForm extends javax.swing.JFrame {
     MsmlApp app;
     static private Map<String, String> rtpdumpMap = new LinkedHashMap<>();
     private String port = "";
+    private String ipAdr = "";
 
     /**
      * Creates new form CallForm
@@ -815,7 +816,9 @@ public class CallUIForm extends javax.swing.JFrame {
                         int selectedColumnIndex = this.rtpdumpTable.getSelectedColumn();
                         String selectedObject = (String) this.rtpdumpTable.getModel().getValueAt(selectedrow, selectedColumnIndex);
 
-                        String cmd = file + " -T -f " + rtpdumpMap.get(selectedObject) + " " + this.addressText.getText() + "/" + this.getPort();
+                        System.out.println("IP ADDRESS RTP PLAY : " + this.getIpAdr());
+
+                        String cmd = file + " -T -f " + rtpdumpMap.get(selectedObject) + " " + this.getIpAdr() + "/" + this.getPort();
                         System.out.println(cmd);
 
                         //String cmd = "C:\\Users\\ssatyana\\Documents\\NetBeansProjects\\Rtpplay\\src\\rtptools_1_18_win_bin\\rtpplay.exe -T -f C:\\Users\\ssatyana\\Documents\\NetBeansProjects\\Rtpplay\\src\\rtptools_1_18_win_bin\\first-rtpdump 146.152.64.141/57348";
@@ -1080,5 +1083,19 @@ public class CallUIForm extends javax.swing.JFrame {
      */
     public void setPort(String port) {
         this.port = port;
+    }
+
+    /**
+     * @return the ipAdr
+     */
+    public String getIpAdr() {
+        return this.ipAdr;
+    }
+
+    /**
+     * @param ipAdr the ipAdr to set
+     */
+    public void setIpAdr(String ipAdr) {
+        this.ipAdr = ipAdr;
     }
 }
