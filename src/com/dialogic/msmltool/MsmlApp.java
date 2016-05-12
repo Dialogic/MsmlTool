@@ -196,26 +196,26 @@ public class MsmlApp implements Observer {
         String contentString = null;
         try {
             String localAdr = Inet4Address.getLocalHost().getHostAddress();
-//            contentString = "v=0\r\n"
-//                    + "o=MsmlTool 575 654 IN IP4 " + localAdr + "\r\n"
-//                    + "s=Talk\r\n"
-//                    + "c=IN IP4 " + localAdr + "\r\n"
-//                    + "t=0 0\r\n"
-//                    + "m=audio 7070 RTP/AVP 0 8 18 101\r\n"
-//                    + "a=rtpmap:0 PCMU/8000\r\n"
-//                    + "a=rtpmap:101 telephone-event/8000\r\n"
-//                    + "a=fmtp:101 0-11\r\n"
-//                    + "a=sendrecv\r\n\r\n";
-            // example sdp with video
-            contentString = "v=0\n"
+            contentString = "v=0\r\n"
                     + "o=MsmlTool 575 654 IN IP4 " + localAdr + "\r\n"
                     + "s=Talk\r\n"
                     + "c=IN IP4 " + localAdr + "\r\n"
                     + "t=0 0\r\n"
-                    + "m=audio 7070 RTP/AVP 0 101\n"
-                    + "a=rtpmap:101 telephone-event/8000\n"
-                    + "m=video 7080 RTP/AVP 96\n"
-                    + "a=rtpmap:96 VP8/90000";
+                    + "m=audio 7070 RTP/AVP 0 8 18 101\r\n"
+                    + "a=rtpmap:0 PCMU/8000\r\n"
+                    + "a=rtpmap:101 telephone-event/8000\r\n"
+                    + "a=fmtp:101 0-11\r\n"
+                    + "a=sendrecv\r\n\r\n";
+            // example sdp with video
+//            contentString = "v=0\n"
+//                    + "o=MsmlTool 575 654 IN IP4 " + localAdr + "\r\n"
+//                    + "s=Talk\r\n"
+//                    + "c=IN IP4 " + localAdr + "\r\n"
+//                    + "t=0 0\r\n"
+//                    + "m=audio 7070 RTP/AVP 0 101\n"
+//                    + "a=rtpmap:101 telephone-event/8000\n"
+//                    + "m=video 7080 RTP/AVP 96\n"
+//                    + "a=rtpmap:96 VP8/90000";
         } catch (UnknownHostException ex) {
             Logger.getLogger(MsmlApp.class.getName()).log(Level.SEVERE, null, ex);
         }
