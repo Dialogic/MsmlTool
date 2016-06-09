@@ -215,7 +215,7 @@ public class MsmlApp implements Observer {
 //                    + "m=audio 7070 RTP/AVP 0 101\n"
 //                    + "a=rtpmap:101 telephone-event/8000\n"
 //                    + "m=video 7080 RTP/AVP 96\n"
-//                    + "a=rtpmap:96 VP8/90000";
+//                    + "a=rtpmap:96 VP8/90000\n";
         } catch (UnknownHostException ex) {
             Logger.getLogger(MsmlApp.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -296,7 +296,12 @@ public class MsmlApp implements Observer {
                     Pattern pattern = Pattern.compile("m=video (.*?) RTP");
                     Matcher m = pattern.matcher(sdp);
                     if (m.find()) {
-                        callForm.setPort(m.group(1));
+                        callForm.setVideoPort(m.group(1));
+                    }
+                    Pattern audioPattern = Pattern.compile("m=audio (.*?) RTP");
+                    Matcher audioMatcher = audioPattern.matcher(sdp);
+                    if (audioMatcher.find()) {
+                        callForm.setAudioPort(audioMatcher.group(1));
                     }
                     Pattern ipAdr = Pattern.compile("o=xmserver .* (.*)");
                     Matcher mIP = ipAdr.matcher(sdp);

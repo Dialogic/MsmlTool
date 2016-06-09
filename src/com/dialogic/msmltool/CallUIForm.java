@@ -61,7 +61,8 @@ public class CallUIForm extends javax.swing.JFrame {
     static final Logger logger = Logger.getLogger(CallUIForm.class.getName());
     MsmlApp app;
     static private Map<String, String> rtpdumpMap = new LinkedHashMap<>();
-    private String port = "";
+    private String videoPort = "";
+    private String audioPort = "";
     private String ipAdr = "";
 
     /**
@@ -808,22 +809,42 @@ public class CallUIForm extends javax.swing.JFrame {
                                 JOptionPane.INFORMATION_MESSAGE);
                         return;
                     } else {
-                        System.out.println("XMS Video port:" + this.getPort());
-                        URL url = getClass().getResource("/rtptools_1_18_win_bin/rtpplay.exe");
-                        System.out.println(url);
-                        File file = new File(url.getPath());
+                        if (!this.getVideoPort().isEmpty()) {
+                            System.out.println("XMS Video port:" + this.getVideoPort());
+                            URL url = getClass().getResource("/rtptools_1_18_win_bin/rtpplay.exe");
+                            System.out.println(url);
+                            File file = new File(url.getPath());
 
-                        int selectedColumnIndex = this.rtpdumpTable.getSelectedColumn();
-                        String selectedObject = (String) this.rtpdumpTable.getModel().getValueAt(selectedrow, selectedColumnIndex);
+                            int selectedColumnIndex = this.rtpdumpTable.getSelectedColumn();
+                            String selectedObject = (String) this.rtpdumpTable.getModel().getValueAt(selectedrow, selectedColumnIndex);
 
-                        System.out.println("IP ADDRESS RTP PLAY : " + this.getIpAdr());
+                            System.out.println("IP ADDRESS RTP PLAY : " + this.getIpAdr());
 
-                        String cmd = file + " -T -f " + rtpdumpMap.get(selectedObject) + " " + this.getIpAdr() + "/" + this.getPort();
-                        System.out.println(cmd);
+                            String cmd = file + " -T -f " + rtpdumpMap.get(selectedObject) + " " + this.getIpAdr() + "/" + this.getVideoPort();
+                            System.out.println(cmd);
 
-                        //String cmd = "C:\\Users\\ssatyana\\Documents\\NetBeansProjects\\Rtpplay\\src\\rtptools_1_18_win_bin\\rtpplay.exe -T -f C:\\Users\\ssatyana\\Documents\\NetBeansProjects\\Rtpplay\\src\\rtptools_1_18_win_bin\\first-rtpdump 146.152.64.141/57348";
-                        Process p = Runtime.getRuntime().exec(cmd);
-                        //p.waitFor();
+                            //String cmd = "C:\\Users\\ssatyana\\Documents\\NetBeansProjects\\Rtpplay\\src\\rtptools_1_18_win_bin\\rtpplay.exe -T -f C:\\Users\\ssatyana\\Documents\\NetBeansProjects\\Rtpplay\\src\\rtptools_1_18_win_bin\\first-rtpdump 146.152.64.141/57348";
+                            Process p = Runtime.getRuntime().exec(cmd);
+                            //p.waitFor();
+                        } else if (!this.getAudioPort().isEmpty()) {
+                            System.out.println("XMS Audio port:" + this.getAudioPort());
+                            URL url = getClass().getResource("/rtptools_1_18_win_bin/rtpplay.exe");
+                            System.out.println(url);
+                            File file = new File(url.getPath());
+
+                            int selectedColumnIndex = this.rtpdumpTable.getSelectedColumn();
+                            String selectedObject = (String) this.rtpdumpTable.getModel().getValueAt(selectedrow, selectedColumnIndex);
+
+                            System.out.println("IP ADDRESS RTP PLAY : " + this.getIpAdr());
+
+                            String cmd = file + " -T -f " + rtpdumpMap.get(selectedObject) + " " + this.getIpAdr() + "/" + this.getAudioPort();
+                            System.out.println(cmd);
+
+                            //String cmd = "C:\\Users\\ssatyana\\Documents\\NetBeansProjects\\Rtpplay\\src\\rtptools_1_18_win_bin\\rtpplay.exe -T -f C:\\Users\\ssatyana\\Documents\\NetBeansProjects\\Rtpplay\\src\\rtptools_1_18_win_bin\\first-rtpdump 146.152.64.141/57348";
+                            Process p = Runtime.getRuntime().exec(cmd);
+                        } else {
+                            System.out.println("Audio and Video ports are not specified!");
+                        }
                     }
                 }
             } else {
@@ -1074,15 +1095,15 @@ public class CallUIForm extends javax.swing.JFrame {
     /**
      * @return the port
      */
-    public String getPort() {
-        return this.port;
+    public String getVideoPort() {
+        return this.videoPort;
     }
 
     /**
      * @param port the port to set
      */
-    public void setPort(String port) {
-        this.port = port;
+    public void setVideoPort(String port) {
+        this.videoPort = port;
     }
 
     /**
@@ -1097,5 +1118,19 @@ public class CallUIForm extends javax.swing.JFrame {
      */
     public void setIpAdr(String ipAdr) {
         this.ipAdr = ipAdr;
+    }
+
+    /**
+     * @return the audioPort
+     */
+    public String getAudioPort() {
+        return audioPort;
+    }
+
+    /**
+     * @param audioPort the audioPort to set
+     */
+    public void setAudioPort(String audioPort) {
+        this.audioPort = audioPort;
     }
 }
