@@ -1,3 +1,6 @@
+![alt tag](http://www.dialogic.com/static/images/dialogic-logo-2016-280.gif)
+
+
 MSMLTool
 ================
 
