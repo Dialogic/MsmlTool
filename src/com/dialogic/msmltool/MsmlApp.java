@@ -9,10 +9,6 @@ import com.dialogic.msml.MsmlEvent;
 import com.dialogic.msml.MsmlEventType;
 import com.dialogic.msml.XMSMsmlConnector;
 import com.dialogic.msml.XMSSipCall;
-import java.io.BufferedOutputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.PrintStream;
 import java.net.Inet4Address;
 import java.net.UnknownHostException;
 import java.util.Observable;
@@ -34,7 +30,6 @@ public class MsmlApp implements Observer {
     
     static String toUser;
     static String toAdr;
-    static Call callObject;
     static CallUIForm callForm;
     static XMSSipCall call;
     static int counter = 0;
@@ -124,88 +119,6 @@ public class MsmlApp implements Observer {
     }
 
     /**
-     * Logic to handle responses.
-     *
-     * @param response
-     * @param cSeq
-     * @param inboundCall
-     */
-//    public static void sipCallResponse(Response response, CSeqHeader cSeq, XMSSipCall inboundCall) {
-//        switch (response.getStatusCode()) {
-//            case Response.OK:
-//                switch (cSeq.getMethod()) {
-//                    case Request.INVITE:
-//                        if (buttonsActive) {
-//                            callForm.updateCallTextArea(response);
-//                            call.createAckRequest(response);
-//                        } else {
-//                            callForm.updateCallTextAreaBridgeXMS(response, null);
-//                            call.createAckRequest(response);
-//                            inboundCall.setLocalSdp(new String(response.getRawContent()));
-//                            inboundCall.createInviteOk(inboundCall.getInviteRequest());
-//                        }
-//                        break;
-//                    case Request.INFO:
-//                        break;
-//                    case Request.BYE:
-//                        if (buttonsActive) {
-//                            callForm.updateCallTextArea(response);
-//                        } else {
-//                            callForm.setVisible(false);
-//                            System.exit(0);
-//                        }
-//                        break;
-//                }
-//                break;
-//            case Response.TRYING:
-//                if (buttonsActive) {
-//                    callForm.updateCallTextArea(response);
-//                } else {
-//                    callForm.updateCallTextAreaBridgeXMS(response, null);
-//                    inboundCall.createTryingResponse(inboundCall.getInviteRequest());
-//                }
-//                break;
-//            case Response.RINGING:
-//                if (buttonsActive) {
-//                    callForm.updateCallTextArea(response);
-//                } else {
-//                    callForm.updateCallTextAreaBridgeXMS(response, null);
-//                    inboundCall.createRingingResponse(inboundCall.getInviteRequest());
-//                }
-//                break;
-//        }
-//    }
-    /**
-     * Logic to handle requests. Ex: ACK, BYE, etc.
-     *
-     * @param request
-     * @param c
-     */
-//    public static void recievedRequest(Request request, XMSSipCall c) {
-//        switch (request.getMethod()) {
-//            case Request.ACK:
-//                callForm.updateCallTextAreaBridgeMode(request, null);
-//                break;
-//            case Request.BYE:
-//                if (buttonsActive) {
-//                    // direct mode
-//                    callForm.updateCallTextArea();
-//                    xmsBye = true;
-//                    call.doByeOk(request);
-//                } else if (c == call) {
-//                    // bye request sent by the XMS, bridge mode
-//                    xmsBye = true;
-//                    call.doByeOk(request);
-//                    getInboundCall().createBye();
-//                } else {
-//                    // bye request sent by the softphone, bridge mode
-//                    c.doByeOk(request);
-//                    call.createBye();
-//                }
-//                break;
-//        }
-//    }
-    /**
      * Send an INFO request based on the information send by the user via the
      * UI.
      *
@@ -218,55 +131,6 @@ public class MsmlApp implements Observer {
         }
     }
 
-    /**
-     * Displays the INFO responses to the user.
-     *
-     * @param msml
-     */
-//    public static void diaplayInfoResponse(String msml) {
-//        callForm.updateRecievedMessage(msml);
-//    }
-    /**
-     * Send an INFO OK response for the INFO request received from XMS. Also
-     * displays this INFO request to the user
-     *
-     * @param request
-     */
-//    public static void infoRequest(Request request) {
-//        call.createInfoResponse(request);
-//        callForm.updateRecievedMessage(new String(request.getRawContent()));
-//    }
-    /**
-     * Send a response for the OPTIONS request.
-     *
-     * @param request
-     * @param c. The incoming call object
-     */
-//    public static void optionsRequest(Request request, XMSSipCall c) {
-//        callForm.updateCallTextAreaBridgeMode(request, null);
-//        c.createOptionsResponse(request);
-//    }
-    /**
-     * Send a response for the CANCEL request .
-     *
-     * @param request
-     * @param c. The incoming call object
-     */
-//    public static void cancelRequest(Request request, XMSSipCall c) {
-//        c.createCancelResponse(request);
-//        if (call != null) {
-//            call.createCancelRequest();
-//        }
-//    }
-    /**
-     * Send ACK for request terminated.
-     *
-     * @param response
-     * @param c. The incoming call object
-     */
-//    public static void requestTerminated(Response response, Call c) {
-//        call.createRequestTerminated(response);
-//    }
     /**
      * Send BYE request when the user clicks on the hangup button.
      */
@@ -298,20 +162,6 @@ public class MsmlApp implements Observer {
         }
     }
 
-    /**
-     *
-     * @param adr.
-     */
-//    public static void setXMSAdr(String adr) {
-//        toAdr = adr;
-//    }
-    /**
-     *
-     * @return the XMS IP address.
-     */
-//    public static String getXMSAdr() {
-//        return toAdr;
-//    }
     /**
      * Used to create BYE when close button is clicked.
      *
@@ -370,25 +220,6 @@ public class MsmlApp implements Observer {
         return contentString;
     }
 
-    /**
-     * This method is used to let the user know about the call flow via the UI.
-     * Displays the responses sent to an incoming invite request. Ex: 200OK,
-     * 100, 180, etc.
-     *
-     * @param res
-     */
-//    public static void updateCallTextBridgeSentResponse(Response res) {
-//        callForm.updateCallTextAreaBridgeMode(null, res);
-//    }
-    /**
-     * This method is used to let the user know about the call flow via the UI.
-     * Displays the requests sent to the XMS, ex: INVITE, ACK, etc.
-     *
-     * @param req
-     */
-//    public static void updateCallTextBridgeRequestToXMS(Request req) {
-//        callForm.updateCallTextAreaBridgeXMS(null, req);
-//    }
     /**
      * This is the Notify handler that will be called by EventThread when new
      * events are created.
